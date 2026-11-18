@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz 4 Review — Respiratory Care</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f3ee; --paper:#fffdf9; --ink:#1d2a2e; --muted:#5d6b6f; --line:#e3ddd3;
+    --accent:#0f6b6b; --accent-soft:#dcefec; --on-accent:#fff; --good:#2e7d4f; --good-soft:#e2f3e8;
+    --bad:#b3412f; --bad-soft:#f8e4df; --warn:#8a5d08; --warn-soft:#f7eed9;
+    --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.04),0 6px 20px rgba(29,42,46,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#141a1c; --paper:#1c2427; --ink:#e8eeee; --muted:#9aa9ac; --line:#2d393d;
+      --accent:#5cc2b8; --accent-soft:#1f3a39; --on-accent:#0d1a1a; --good:#6fcf94; --good-soft:#1d3427;
+      --bad:#f08a76; --bad-soft:#3b231e; --warn:#e6bb62; --warn-soft:#3a3020;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 18px 80px}
+  header h1{font-family:Fraunces,Georgia,serif;font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.1;margin:0 0 6px;letter-spacing:-.01em}
+  header p{margin:0;color:var(--muted)}
+  .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+  nav.main{display:flex;gap:6px;margin:22px 0 18px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:5px;position:sticky;top:10px;z-index:5;box-shadow:var(--shadow)}
+  nav.main a{flex:1;text-align:center;padding:9px 10px;border-radius:999px;text-decoration:none;color:var(--muted);font-weight:600;font-size:15px}
+  nav.main a.on{background:var(--accent);color:var(--on-accent)}
+  section.view{display:none} section.view.on{display:block}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:6px;scrollbar-width:thin}
+  .chip{flex:none;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);padding:7px 13px;border-radius:999px;font:600 14px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+  .chip:hover{border-color:var(--accent)}
+  .chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .chip .n{opacity:.7;font-weight:500;margin-left:4px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card.flag{background:var(--warn-soft);border-color:transparent;box-shadow:none;font-size:15px}
+  .card.flag ul{margin:6px 0 8px;padding-left:20px} .card.flag li{margin:4px 0}
+  .unit-title{font-family:Fraunces,Georgia,serif;font-size:26px;margin:8px 0 14px}
+  h2{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:21px;margin:0 0 12px}
+  h3{font-size:15px;margin:16px 0 4px}
+  .notes ul{margin:6px 0 0;padding-left:20px} .notes li{margin:6px 0}
+  .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--warn-soft);color:var(--warn);vertical-align:middle;margin-left:6px}
+  table{width:100%;border-collapse:collapse;margin-top:4px;font-size:15px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-weight:600;background:var(--accent-soft)}
+  td:first-child{color:var(--muted)}
+  table.plain td:first-child{color:inherit}
+  table.dev{min-width:560px;font-size:14px} table.dev td:first-child{color:inherit;font-weight:600}
+  table.dev i{font-style:normal;font-size:12px;color:var(--accent);font-weight:600}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .spacer{flex:1}
+  button,select{font:inherit}
+  .btn{border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer}
+  .btn:hover{border-color:var(--accent)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  .btn.good{background:var(--good-soft);border-color:transparent;color:var(--good)}
+  .btn.bad{background:var(--bad-soft);border-color:transparent;color:var(--bad)}
+  .btn:disabled{opacity:.45;cursor:default}
+  select{border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:9px 10px;border-radius:10px;max-width:100%}
+  label.check{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--muted);cursor:pointer}
+  .muted{color:var(--muted);font-size:14px}
+  /* flashcards */
+  .flip{perspective:1400px;margin:14px 0;cursor:pointer;user-select:none;outline:none}
+  .flip-inner{position:relative;min-height:280px;transition:transform .5s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+  .flip.flipped .flip-inner{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:44px 26px 34px;display:flex;flex-direction:column;justify-content:center;overflow:auto}
+  .flip:focus-visible .face{outline:2px solid var(--accent);outline-offset:3px}
+  .face.back{transform:rotateY(180deg);background:var(--accent-soft);border-color:transparent}
+  .face .topic{position:absolute;top:16px;left:22px;right:22px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+  .face .hint{position:absolute;bottom:12px;right:20px;font-size:12px;color:var(--muted)}
+  .face .q{font-family:Fraunces,Georgia,serif;font-size:clamp(20px,3.6vw,26px);line-height:1.3}
+  .face .a{font-size:18px;line-height:1.5}
+  .face .a ul,.face .a ol{margin:0;padding-left:20px}
+  .progress{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0 2px}
+  .progress > div{height:100%;background:var(--accent);width:0;transition:width .3s}
+  /* quiz */
+  .opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);padding:13px 15px;border-radius:12px;margin:8px 0;cursor:pointer;font-size:16px}
+  .opt:hover:not(:disabled){border-color:var(--accent)}
+  .opt.correct{border-color:var(--good);background:var(--good-soft)}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+  .opt:disabled{cursor:default}
+  .explain{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--accent-soft);font-size:15px}
+  .explain b.v{display:block;margin-bottom:2px}
+  .qunit{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:10px}
+  .qtext{font-family:Fraunces,Georgia,serif;font-size:21px;line-height:1.35;margin:4px 0 10px}
+  .score{font-family:Fraunces,Georgia,serif;font-size:56px;line-height:1;margin:6px 0}
+  .bars{margin:14px 0 4px}
+  .bar{display:grid;grid-template-columns:minmax(120px,190px) 1fr 54px;gap:10px;align-items:center;font-size:14px;margin:6px 0}
+  .bar .track{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar .fill{height:100%;background:var(--accent);border-radius:99px}
+  .missed li{margin:10px 0}
+  .swipe{display:none;margin:-4px 0 8px} @media (max-width:600px){.swipe{display:block}}
+  footer{margin-top:30px;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Respiratory Care · Study Tool</div>
+    <h1>Quiz #4 Review</h1>
+    <p>Review sheet + lectures: oxygen therapy, oxygen delivery devices, humidity &amp; aerosol therapy, airway clearance &amp; incentive spirometry.</p>
+  </header>
+
+  <nav class="main">
+    <a href="#notes" data-view="notes">Notes</a>
+    <a href="#cards" data-view="cards">Flashcards</a>
+    <a href="#quiz" data-view="quiz">Practice Quiz</a>
+  </nav>
+
+  <section id="view-notes" class="view notes">
+    <div class="chips" id="noteChips"></div>
+    <div id="noteBody"></div>
+  </section>
+
+  <section id="view-cards" class="view">
+    <div class="row">
+      <select id="cardUnit" aria-label="Unit"></select>
+      <select id="cardTopic" aria-label="Topic"></select>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label class="check"><input type="checkbox" id="onlyLearning"> Still learning only</label>
+      <span class="spacer"></span>
+      <button class="btn" id="shuffleCards">Shuffle</button>
+    </div>
+    <div class="row" style="margin-top:12px"><span class="muted" id="cardCount"></span></div>
+    <div class="progress"><div id="cardBar"></div></div>
+    <div class="flip" id="flip" tabindex="0" aria-live="polite">
+      <div class="flip-inner">
+        <div class="face front"><span class="topic" id="fTopic"></span><div class="q" id="fQ"></div><span class="hint">Tap to flip</span></div>
+        <div class="face back"><span class="topic" id="bTopic"></span><div class="a" id="fA"></div><span class="hint">Tap to flip back</span></div>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn" id="prevCard">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn bad" id="learnCard">Still learning</button>
+      <button class="btn good" id="knowCard">Got it ✓</button>
+    </div>
+    <p class="muted" style="margin-top:14px" id="cardStatus"></p>
+  </section>
+
+  <section id="view-quiz" class="view">
+    <div id="quizBox"></div>
+  </section>
+
+  <footer>Built from the Quiz #4 Review sheet (rev. 11/12/26 AC) and the Oxygen Therapy, Oxygen Delivery Devices, Humidity &amp; Aerosol Therapy, and Airway Clearance/Incentive Spirometry lectures.<br>Items marked <span class="tag" style="margin:0">extra</span> aren't spelled out in the materials, so check them against your class notes.</footer>
+</div>
+
+<script>
+/* =====================================================================
+   CONTENT
+   Each unit has:
+     notes: [{topic, items:[...]}  |  {topic, html}  |  {flag}]
+     cards: [topic, front, back]
+     quiz:  [question, correct answer, [wrong answers], explanation]
+   ===================================================================== */
+const UNITS = [
+
+/* ---------------------------------------------------------------- */
+{ id:"review", name:"Quiz 4 Review Sheet", short:"Review Sheet",
+  notes:[
+    {flag:"<b>Where the lecture slides differ from the review sheet:</b><ul>"+
+      "<li><b>Incentive spirometry hold:</b> the sheet says hold <b>3–5 seconds</b>. The Airway Clearance slides say inspiratory time 5–15 s with a <b>2–3 second pause</b>.</li>"+
+      "<li><b>Bubble humidifier:</b> the sheet says nasal cannula only. The Aerosol slide notes say nasal cannulas <i>and simple masks</i>.</li>"+
+      "<li><b>HME efficiency:</b> the sheet says 70%. The slide notes say about 50–70%.</li>"+
+      "<li><b>CPT contraindications:</b> the sheet lists ↑ICP, cardiac instability and active bleeding. The slides split them into absolute (head/neck injury, active hemorrhage, hemodynamic instability) and relative (↑ICP and others).</li>"+
+      "</ul>For Quiz 4, the review sheet is probably the safer bet — but ask your professor if you're unsure."},
+    {topic:"Humidity & the Nose", items:[
+      "<b>Functions of the nose:</b> filter, warm, and humidify inspired gas.",
+      "By the time gas reaches the alveoli it is <b>100% BTPS</b> and holds <b>44 mg/L H₂O</b> at body temperature (37 °C).",
+      "<b>Humidity</b> = molecular water added to the gas (oxygen)."]},
+    {topic:"Oxygen & Aerosol Devices", items:[
+      "<b>Bubble humidifier:</b> only used with a <b>nasal cannula</b>. Has a <b>2 psig</b> pressure pop-off valve — if the tubing kinks and obstructs flow, it <b>whistles</b>.",
+      "<b>Cool mist aerosol device:</b> large volume nebulizer — sterile water, corrugated tubing, and a drain.",
+      "<b>Trach collar:</b> only used with a trach patient.",
+      "<b>Face tent:</b> only for facial swelling, facial burns, or jaw surgery.",
+      "<b>Aerosol mask:</b> used a lot.",
+      "<b>T-piece:</b> patient is intubated but <i>not</i> connected to the ventilator. Often used for <b>weaning</b>."]},
+    {topic:"Humidification for Ventilated Patients", html:
+      "<table><thead><tr><th></th><th>Heat Moisture Exchanger (HME)</th><th>Heated Passover Humidifier</th></tr></thead><tbody>"+
+      "<tr><td>Humidity</td><td>70% efficiency</td><td>100% body humidity</td></tr>"+
+      "<tr><td>Temperature</td><td>Body temperature</td><td>37 °C</td></tr>"+
+      "<tr><td>Water content</td><td>18–34 mg/L H₂O</td><td>44 mg/L H₂O</td></tr></tbody></table>"},
+    {topic:"Aerosol Therapy & Treatments", items:[
+      "<b>Ideal particle size: 1–5 microns.</b>",
+      "Deposition depends on the particles' motion/kinetic energy, their size, and the configuration of the airways.",
+      "Delivery methods: small volume nebulizer (SVN), MDI, DPI.",
+      "<b>Spacer:</b> used when the patient <b>cannot coordinate</b> inhaling with pressing down on the MDI.",
+      "Know how to recognize a <b>complete vs. incomplete order</b>. <span class='tag'>extra</span> A complete order generally includes the medication, dose, delivery method/route, and frequency (plus patient, date/time, and prescriber)."]},
+    {topic:"When to Stop a Treatment", items:[
+      "Stop if the patient's <b>HR changes by more than 20 beats/min from baseline</b>.",
+      "Notify the <b>MD and the RN</b>.",
+      "Then you can suggest: stopping completely, lowering the dose, decreasing the frequency (e.g., <b>Q4 → Q6</b>), or, if on albuterol, switching to <b>levalbuterol</b>."]},
+    {topic:"Peak Flow Monitoring", items:[
+      "<b>When:</b> pre/post treatment. In the hospital, pre/post <i>each</i> treatment; at home, usually <b>morning and night</b>.",
+      "<b>Instruction:</b> take a deep breath in and blow it out <b>hard and fast</b> — like blowing out birthday candles.",
+      "<b>Report the highest value</b>, provided the patient gave good, consistent efforts.",
+      "Looking for a <b>12–15% increase</b>."]},
+    {topic:"Chest Physiotherapy (CPT)", items:[
+      "<b>Indications:</b> lots of mucus (~30 mL), cystic fibrosis, bronchiectasis — any infection/disease where the patient produces lots of mucus and can mobilize secretions.",
+      "<b>Contraindications:</b> increased ICP, cardiac instability, active bleeding (hemorrhage).",
+      "<b>Modification is common</b> — most patients can't tolerate the head-down (Trendelenburg) position.",
+      "Electric and pneumatic powered percussors are commonly used.",
+      "<b>High frequency oscillating vest:</b> vibrates the entire chest wall; used a lot with CF.",
+      "<b>Flutter valve:</b> handheld device; a metal ball vibrates inside the plastic piece."]},
+    {topic:"Incentive Spirometry & Atelectasis", items:[
+      "<b>Indications:</b> prevent post-op atelectasis — open heart, any abdominal or chest surgery, fractured ribs.",
+      "<b>Instructions:</b> deep breath in, <b>hold 3–5 seconds</b>, exhale fully. At least <b>10 times per hour</b>.",
+      "Best to <b>teach before surgery</b> so you know the patient's goal.",
+      "<b>Volumes measured:</b> V<sub>T</sub> + IRV = <b>Inspiratory Capacity (IC)</b>.",
+      "<b>Prone to atelectasis:</b> smokers, COPD, neuromuscular disease / quadriplegic, and obese patients.",
+      "<b>Signs of retained secretions:</b> ↓ SaO₂, ↑ WOB with accessory muscle use, ↑ FiO₂ requirement."]}
+  ],
+  cards:[
+    ["Humidity & the Nose","What are the three functions of the nose?","Filter, warm, and humidify inspired gas."],
+    ["Humidity & the Nose","What is the condition of gas when it reaches the alveoli?","100% BTPS — holding <b>44 mg/L H₂O</b> at body temperature (37 °C)."],
+    ["Humidity & the Nose","Define humidity.","Molecular water added to the gas (oxygen)."],
+    ["Devices","A bubble humidifier is only used with which device?","A <b>nasal cannula</b>."],
+    ["Devices","What is the bubble humidifier's pop-off pressure, and what happens when tubing kinks?","<b>2 psig</b>. The valve releases and <b>whistles</b>."],
+    ["Devices","What is the cool mist aerosol device, and what does its setup include?","Large volume nebulizer — sterile water, corrugated tubing, and a drain."],
+    ["Devices","Who gets a trach collar?","Only patients with a <b>tracheostomy</b>."],
+    ["Devices","When is a face tent used?","Facial swelling, facial burns, or jaw surgery."],
+    ["Devices","When is a T-piece used?","Patient is <b>intubated but not on the ventilator</b>. Often used for <b>weaning</b>."],
+    ["Ventilator Humidification","HME: efficiency and water content?","<b>70%</b> efficiency, <b>18–34 mg/L</b> H₂O."],
+    ["Ventilator Humidification","Heated passover humidifier: humidity, temp, and water content?","<b>100%</b> body humidity, <b>37 °C</b>, <b>44 mg/L</b> H₂O."],
+    ["Aerosol & Treatments","What is the ideal aerosol particle size?","<b>1–5 microns.</b>"],
+    ["Aerosol & Treatments","Which factors affect where aerosol particles deposit?","Motion / kinetic energy, particle size, and airway configuration."],
+    ["Aerosol & Treatments","When is a spacer used with an MDI?","When the patient <b>can't coordinate</b> inhaling with pressing the canister."],
+    ["Aerosol & Treatments","What makes a medication order complete? <span class='tag'>extra</span>","Generally: medication, dose, delivery method/route, and frequency — plus patient, date/time, and prescriber. Missing any of these = incomplete."],
+    ["Stopping a Treatment","At what heart rate change do you stop a treatment?","An HR change of <b>more than 20 beats/min from baseline</b>."],
+    ["Stopping a Treatment","After stopping a treatment, who do you notify?","The <b>MD and the RN</b>."],
+    ["Stopping a Treatment","After stopping, what four changes can you suggest?","<ul><li>Stop the treatment completely</li><li>Lower the dose</li><li>Decrease the frequency (Q4 → Q6)</li><li>Albuterol → <b>levalbuterol</b></li></ul>"],
+    ["Peak Flow","When is peak flow measured?","Pre/post treatment. Hospital: pre/post <i>each</i> treatment. Home: <b>morning and night</b>."],
+    ["Peak Flow","How do you instruct the patient for a peak flow?","Deep breath in, blow out <b>hard and fast</b> — like blowing out birthday candles."],
+    ["Peak Flow","Which peak flow value do you report?","The <b>highest</b> value, as long as the efforts were good and consistent."],
+    ["Peak Flow","What % improvement are you looking for in peak flow?","A <b>12–15% increase</b>."],
+    ["Chest Physiotherapy","CPT indications?","Lots of mucus (~30 mL), cystic fibrosis, bronchiectasis — anyone producing lots of mucus who can mobilize secretions."],
+    ["Chest Physiotherapy","CPT contraindications (per the review sheet)?","<b>Increased ICP</b>, <b>cardiac instability</b>, <b>active bleeding</b> (hemorrhage)."],
+    ["Chest Physiotherapy","Why is CPT so often modified?","Most patients can't tolerate the head-down (<b>Trendelenburg</b>) position."],
+    ["Chest Physiotherapy","Two types of powered percussors?","Electric and pneumatic."],
+    ["Chest Physiotherapy","What does the high frequency oscillating vest do, and who uses it most?","Vibrates the <b>entire chest wall</b>; used a lot with <b>cystic fibrosis</b>."],
+    ["Chest Physiotherapy","How does a flutter valve work?","Handheld device — a <b>metal ball vibrates</b> inside the plastic piece."],
+    ["Incentive Spirometry","Indications for incentive spirometry?","Prevent <b>post-op atelectasis</b>: open heart, abdominal or chest surgery, fractured ribs."],
+    ["Incentive Spirometry","How do you instruct a patient on IS (per the review sheet)?","Deep breath in, <b>hold 3–5 seconds</b>, exhale fully. At least <b>10×/hour</b>."],
+    ["Incentive Spirometry","When is the best time to teach IS?","<b>Before surgery</b>, so you know the patient's goal."],
+    ["Incentive Spirometry","Which two volumes does IS measure, and what do they equal?","V<sub>T</sub> + IRV = <b>Inspiratory Capacity</b>."],
+    ["Incentive Spirometry","Which patients are prone to atelectasis?","Smokers, COPD, neuromuscular disease / quadriplegic, and obese patients."],
+    ["Incentive Spirometry","Clinical signs of retained secretions?","↓ SaO₂, ↑ WOB with accessory muscle use, ↑ FiO₂ requirement."]
+  ],
+  quiz:[
+    ["When inspired gas reaches the alveoli, how much water vapor does it hold at body temperature?","44 mg/L",["18 mg/L","34 mg/L","100 mg/L"],"Gas at the alveoli is 100% BTPS — 44 mg/L H₂O at 37 °C."],
+    ["Which is NOT one of the functions of the nose?","Remove carbon dioxide",["Filter","Warm","Humidify"],"The nose filters, warms, and humidifies. Gas exchange (CO₂ removal) happens at the alveoli."],
+    ["Per the review sheet, a bubble humidifier is used with which device?","Nasal cannula",["Aerosol mask","Trach collar","T-piece"],"The review sheet says bubble humidifiers are only used with a nasal cannula."],
+    ["The bubble humidifier begins to whistle. What is the most likely cause?","Kinked or obstructed tubing",["The water level is too high","The flow is set too low","The patient is mouth breathing"],"The 2 psig pop-off valve releases (and whistles) when the tubing is kinked and flow is obstructed."],
+    ["What is the pop-off pressure on a bubble humidifier?","2 psig",["5 psig","10 psig","50 psig"],"Bubble humidifiers have a 2 psig pressure pop-off valve."],
+    ["A patient has extensive facial burns and needs aerosol therapy. Which device is best?","Face tent",["Aerosol mask","Trach collar","Nasal cannula with bubble humidifier"],"Face tents are used for facial swelling, facial burns, or jaw surgery."],
+    ["An intubated patient is being weaned and is off the ventilator. Which device delivers aerosol?","T-piece",["Trach collar","Face tent","Aerosol mask"],"A T-piece is for a patient who is intubated but not on the ventilator, often during weaning."],
+    ["A trach collar is used for:","Patients with a tracheostomy",["Intubated patients on the ventilator","Patients after jaw surgery","Any patient on a large volume nebulizer"],"Trach collars are only used with trach patients."],
+    ["Which is part of a large volume (cool mist) nebulizer setup?","Corrugated tubing and a drain",["A 2 psig pop-off valve","A heated wire circuit","A spacer"],"An LVN uses sterile water, corrugated tubing, and a drain."],
+    ["Compared with a heated passover humidifier, an HME provides:","About 70% efficiency and 18–34 mg/L H₂O",["100% body humidity and 44 mg/L H₂O","About 30% efficiency and 10 mg/L H₂O","100% efficiency and 18–34 mg/L H₂O"],"HME: 70% efficiency, 18–34 mg/L. Heated passover: 100% body humidity, 37 °C, 44 mg/L."],
+    ["A heated passover humidifier delivers gas at what temperature?","37 °C",["22 °C","32 °C","41 °C"],"Heated passover humidifiers deliver 100% body humidity at 37 °C (44 mg/L)."],
+    ["What is the ideal aerosol particle size?","1–5 microns",["0.1–0.5 microns","5–10 microns","10–20 microns"],"1–5 microns is the ideal particle size."],
+    ["Which patient most needs a spacer with an MDI?","One who can't coordinate inhaling with pressing the canister",["One who has a tracheostomy and can't hold the device","One whose peak flow is already above predicted","One who is switching from an MDI to a DPI"],"Spacers are for patients who can't coordinate inhalation with actuation."],
+    ["During an albuterol treatment, the HR goes from 82 to 108. What should you do first?","Stop the treatment",["Continue — this is expected","Increase the dose","Switch to a DPI and continue"],"An HR change of more than 20 beats/min from baseline (here, 26) means stop the treatment."],
+    ["After stopping a treatment because of an HR change, you should notify:","The MD and the RN",["Only the RN","Only the charge RT","The pharmacist only"],"Notify both the MD and the RN, then make your suggestions."],
+    ["Which is NOT a suggestion you would make after stopping a treatment for tachycardia?","Increase the frequency from Q6 to Q4",["Lower the dose","Change from albuterol to levalbuterol","Decrease the frequency from Q4 to Q6"],"You'd decrease the frequency (Q4 → Q6), not increase it."],
+    ["The best instruction for a peak flow measurement is:","Deep breath in, then blow out hard and fast",["Breathe in slowly and hold for 10 seconds","Breathe normally into the device for 1 minute","Exhale slowly and completely"],"Like blowing out birthday candles: deep breath, then hard and fast."],
+    ["A patient's three peak flows are 310, 340, and 330 L/min with good, consistent effort. What do you report?","340 L/min",["310 L/min","327 L/min (the average)","330 L/min (the last one)"],"Report the highest value, provided the efforts were good and consistent."],
+    ["What improvement in peak flow after a treatment shows a good response?","A 12–15% increase",["A 2–5% increase","A 25–30% increase","Any decrease"],"You're looking for a 12–15% increase."],
+    ["At home, peak flow is usually measured:","Morning and night",["Only when symptomatic","Once a week","Every hour"],"Home monitoring is usually morning and night."],
+    ["Which is an indication for chest physiotherapy?","Cystic fibrosis",["Increased ICP","Active hemorrhage","Cardiac instability"],"CF, bronchiectasis, and large mucus production are indications. The others are contraindications."],
+    ["Per the review sheet, which is a contraindication to CPT?","Increased intracranial pressure",["Bronchiectasis","Large mucus production","Cystic fibrosis"],"Review sheet contraindications: increased ICP, cardiac instability, active bleeding."],
+    ["Why is CPT so often modified?","Most patients can't tolerate Trendelenburg (head-down)",["Percussors are rarely available","It's only ordered once a day","Patients can't tolerate the sitting position"],"Most patients can't tolerate the head-down position, so the therapy is modified."],
+    ["Which device vibrates the entire chest wall and is used a lot with CF?","High frequency oscillating vest",["Flutter valve","Incentive spirometer","Pneumatic percussor"],"The HFCWO vest vibrates the entire chest wall."],
+    ["A handheld device with a metal ball that vibrates inside a plastic piece is a:","Flutter valve",["Incentive spirometer","Peak flow meter","Spacer"],"That's the flutter valve."],
+    ["Per the review sheet, correct incentive spirometry instructions are:","Deep breath in, hold 3–5 s, exhale fully — at least 10×/hour",["Deep breath in, blow out hard and fast — 3 times a day","Deep breath in, hold 3–5 s, exhale fully — once an hour","Slow breath in, hold 20 s, exhale slowly — 5 times an hour"],"Deep breath, hold 3–5 seconds, exhale fully, at least 10 times per hour."],
+    ["When is the best time to teach incentive spirometry?","Before surgery",["Right after extubation","On the day of discharge","Only once atelectasis appears"],"Teach it before surgery so you know the patient's goal."],
+    ["Incentive spirometry measures V<sub>T</sub> + IRV, which equals:","Inspiratory capacity",["Vital capacity","Functional residual capacity","Total lung capacity"],"V<sub>T</sub> + IRV = IC."],
+    ["Which patient is LEAST likely to be prone to atelectasis?","A healthy, non-smoking 25-year-old",["A smoker","An obese patient","A quadriplegic patient"],"Smokers, COPD, neuromuscular/quadriplegic, and obese patients are prone to atelectasis."],
+    ["Which finding suggests retained secretions?","Rising FiO₂ requirement",["Rising SaO₂","Decreased work of breathing","Peak flow up 15%"],"Retained secretions: ↓ SaO₂, ↑ WOB/accessory muscle use, ↑ FiO₂ requirement."],
+    ["Incentive spirometry is indicated to prevent:","Post-operative atelectasis",["Bronchospasm","Pulmonary edema","Pneumothorax"],"IS prevents post-op atelectasis: open heart, abdominal/chest surgery, rib fractures."]
+  ]
+},
+
+/* ---------------------------------------------------------------- */
+{ id:"pq", name:"Class Practice Questions", short:"Class Questions",
+  notes:[], cards:[],
+  quiz:[
+    ["How should the RCP instruct the patient to breathe during a small volume nebulizer treatment?","Slow, normal breathing",["Rapid and deep breathing","Rapid and shallow breathing","Normal breathing and hold your breath for 5–10 seconds"],"For an SVN, the patient breathes slowly at normal tidal volumes through the mouthpiece. Rapid breathing cuts down deposition, and a 5–10 second breath hold is the MDI technique, not the SVN."],
+    ["The therapist has an order for a bronchodilator via SVN. On entering the room, the patient is lethargic with an RR of 6/min and an HR of 160/min with a weak pulse. He's on a nasal cannula at 3 L/min. The therapist should FIRST:","Activate the emergency medical team",["Obtain an arterial blood gas","Increase the O₂ flow to 5 L/min and monitor with pulse oximetry","Recommend obtaining a chest radiograph"],"Lethargy, a respiratory rate of 6, and an HR of 160 with a weak pulse means the patient is crashing. Call the emergency team first, then do everything else."],
+    ["A patient is receiving 40% O₂ via an air-entrainment mask at 8 L/min. The flow is increased to 12 L/min. What percentage is the patient now receiving?","40%",["45%","50%","60%"],"The jet size and entrainment port set the FiO₂ on an air-entrainment mask. Turning up the flow raises the total flow, but the FiO₂ stays 40%."],
+    ["A physician orders a non-rebreathing mask for a patient with a history of COPD and a PaO₂ of 59 mm Hg. The patient is in no acute distress. The therapist should:","Notify the physician before setting up the mask and suggest a lower-FiO₂ device",["Set up the mask as ordered","Ask the nurse for clarification","Set up the mask and notify your supervisor at shift change"],"A COPD patient at a PaO₂ of 59 who isn't in distress only needs a low FiO₂. An NRB risks O₂-induced hypoventilation. Clarify with the physician (not the nurse) before you set it up, and suggest a low-flow or Venturi device."],
+    ["A patient is on a non-rebreathing mask at 10 L/min. The reservoir bag empties during inspiration. The therapist should:","Increase the flow to 15 L/min",["Change to a simple mask at 10 L/min","Intubate the patient","Remove the one-way valve from the exhalation port"],"The NRB runs at 10–15 L/min, enough to keep the bag inflated. If the bag collapses on inspiration, turn up the flow."],
+    ["A ventilated patient has an HME in place. Suctioning has become more difficult because the secretions have gotten thicker. The therapist should recommend:","Replace the HME with a heated humidifier",["Increase the suction level","Use a larger suction catheter","Suction the patient more frequently"],"HMEs give only about 70% efficiency (18–34 mg/L). Thick secretions are a hazard of HMEs. A heated passover humidifier gives 100% body humidity (44 mg/L at 37 °C)."],
+    ["Which oxygen delivery device is most appropriate for delivering an 80/20 heliox mixture?","Non-rebreathing mask",["Simple oxygen mask","Nasal cannula","Air-entrainment mask"],"Heliox needs a closed system, so a non-rebreather (or a cuffed airway). An air-entrainment mask pulls in room air and dilutes the helium, and a cannula leaks it."],
+    ["A patient is on a 60% aerosol mask with the flow at 8 L/min. The patient becomes dyspneic and the SpO₂ drops to 88%. The most appropriate change is:","Recommend a high-flow nasal cannula at 60% and 40 L/min, 37 °C",["Increase the O₂ to 70%","Increase the flow to 15 L/min","Recommend administering a bronchodilator"],"At 60%, the air:O₂ ratio is only 1:1. So 8 L/min gives about 16 L/min total, and even 15 L/min gives only about 30 L/min, which is too little for a dyspneic patient. Raising the FiO₂ to 70% would drop the total flow even more. HFNC keeps the FiO₂ at 60% with enough flow to meet demand. (This one is a judgment call — check it against your graded key.)"],
+    ["While making O₂ rounds, the therapist sees the bed sheet pulled up over the entrainment port of an air-entrainment mask. What effect will this have?","The delivered O₂ percentage will increase as the total flow decreases",["Less air entrainment will occur, decreasing the delivered O₂ percentage","The delivered O₂ percentage will stay the same, but the total flow will decrease","The total flow will increase along with the O₂ percentage"],"Blocking the port means less room air gets entrained. Less air means a higher FiO₂ and a lower total flow, the same thing that happens with back pressure."],
+    ["Which is the most appropriate recommendation to help prevent post-op atelectasis after a hypotensive patient's abdominal surgery?","Incentive spirometry",["CPAP","IPPB","PEP"],"IS is indicated to prevent post-op atelectasis after abdominal surgery. CPAP, IPPB, and PEP raise intrathoracic pressure, which can drop the blood pressure further in a hypotensive patient."],
+    ["When determining the need for oxygen therapy, the RCP should assess which of the following?","Neurologic, pulmonary, and cardiac status",["Neurologic and cardiac status only","Cardiac status only","Pulmonary status only"],"Hypoxemia shows up in all three systems: cardiac (tachycardia, HTN, arrhythmias), respiratory (tachypnea, dyspnea, accessory muscles, cyanosis), and neurologic (restlessness, disorientation, impaired judgment). Assess all three."],
+    ["A nasal cannula set at 5 L/min gives an approximate FiO₂ of:","40%",["28%","30%","50%"],"Rule of thumb: about 21% + 4% per L/min. 21 + (5 × 4) ≈ 41%, so about 40%. (The cannula range is 22–45% at ¼–8 L/min.)"],
+    ["A 52-year-old man comes into the ED with radiating chest pain, central cyanosis, and an SaO₂ of 90% on room air. Which O₂ device should the RCP set up?","100% non-rebreather mask",["50% air-entrainment mask","5 L/min nasal cannula","28% air-entrainment mask"],"Chest pain/MI with central cyanosis is an acute hypoxemic emergency, and the heart needs O₂. The NRB's best use is the ER for short-term, high FiO₂. He has no COPD history, so there's no reason to hold back."],
+    ["What are important factors when selecting an O₂ delivery device for a patient?","Airway type, severity of hypoxemia, stability of V<sub>T</sub>, and age",["Airway type, severity of hypoxemia, and age — but not V<sub>T</sub> stability","Stability of V<sub>T</sub> and age only","Airway type and severity of hypoxemia only"],"All four matter. An artificial airway needs a different interface. Severity sets the FiO₂ you need. An unstable breathing pattern makes low-flow FiO₂ unreliable, so you'd pick a fixed-performance device. Some devices are age-limited (Venturi masks are adults only, oxyhoods are for infants)."],
+    ["An MD asks the RCP to set up a 60% Venturi mask. What will the RCP do?","Call the MD and explain that this mask only delivers up to 50%",["Set it up — this is a valid order","Set up a nasal cannula at 8 L/min","Ask the RN what to do"],"Air-entrainment (Venturi) masks deliver 24–50%. A 60% order isn't possible, so clarify with the MD (an air-entrainment nebulizer can deliver 28–100%)."],
+    ["During a breathing treatment, the patient's HR goes from a baseline of 84 to 120 within 8 minutes. The RCP will now:","Stop the treatment and notify the MD of the adverse side effects",["Continue the treatment as ordered","Tell the patient to wait five minutes and continue","Ask your coworker what to do"],"An HR change of 36 is more than 20 beats/min from baseline, so stop the treatment. Notify the MD (and RN), then suggest a lower dose, less frequent treatments, or levalbuterol."],
+    ["A patient is ordered incentive spirometry. How does the RCP determine whether the patient is doing it correctly?","Have the patient give a return demonstration",["Tell the patient to use it whenever a commercial comes on TV","Do nothing — the patient will figure it out","Have the patient write out the instructions"],"Watch the patient do it. Observe use and give feedback, which is part of IS monitoring. Return demonstrations are also how you check home equipment teaching."],
+    ["During chest physiotherapy, a cystic fibrosis patient develops hypoxemia. What will the RCP do?","Discontinue the treatment because hypoxemia resulted",["Stop the treatment, sit the patient up to recover, then continue as ordered","Do nothing — it's important for the patient to have their therapy","Modify the patient's position to allow adequate oxygenation"],"Per the lecture: if the patient becomes hypoxemic, give 100% O₂, stop therapy immediately, return the patient to the resting position, and consult the physician. You don't just resume as ordered. (This one is also worth checking against your graded key.)"],
+    ["What capacity is measured during incentive spirometry?","Inspiratory capacity",["Vital capacity","Residual capacity","Total lung capacity"],"IS measures V<sub>T</sub> + IRV, which is the inspiratory capacity (about 3,600 mL). Residual volume can't be measured by any spirometer."],
+    ["A COPD patient who is a known CO₂ retainer is placed on a 50% air-entrainment mask and becomes drowsy, lethargic, and unresponsive. This is most likely the result of:","Increased PaCO₂",["Insufficient oxygenation","Decreased venous return","Hyperventilation"],"Too much O₂ suppresses the hypoxic drive, which leads to hypoventilation, CO₂ retention, and CO₂ narcosis (drowsiness, lethargy, unresponsiveness). This is O₂-induced hypoventilation."]
+  ]
+},
+
+/* ---------------------------------------------------------------- */
+{ id:"jep", name:"Jeopardy Review", short:"Jeopardy",
+  notes:[], cards:[],
+  quiz:[
+    ["A patient is started on O₂ therapy. Which set of changes best shows the therapy is meeting all three of its goals?","SaO₂ increases, RR decreases, HR decreases",["SaO₂ increases, RR increases, HR increases","SaO₂ decreases, RR decreases, HR decreases","SaO₂ stays the same, RR decreases, HR increases"],"The 3 goals: decrease hypoxemia (SaO₂ ↑), decrease work of breathing (RR ↓), and decrease myocardial work (HR ↓)."],
+    ["Which patient is at greatest risk for oxygen-induced hypoventilation?","A COPD patient who chronically retains CO₂",["A post-op patient with normal lungs","A child with croup on a cool mist tent","An asthmatic with a PaCO₂ of 32 mm Hg"],"COPD CO₂ retainers breathe on the hypoxic drive. Too much O₂ suppresses it → hypoventilation and a rising PaCO₂."],
+    ["A firefighter arrives in the ED after smoke inhalation, complaining of a headache and confusion. The pulse oximeter reads 99%. Which device should the RCP set up?","100% non-rebreather mask",["Nasal cannula at 4 L/min","28% air-entrainment mask","Simple mask at 6 L/min"],"Suspect CO poisoning. A pulse oximeter can't tell COHb from O₂Hb, so a 99% reading isn't reassuring. Give 100% O₂ via NRB to flush out the CO (and consider HBO)."],
+    ["Which patient is the best candidate for hyperbaric oxygen therapy?","A diabetic with a non-healing foot wound",["An asthmatic in a mild exacerbation","A stable COPD patient on home O₂","A post-op patient with mild atelectasis"],"HBO treats problem wounds like diabetic foot ulcers, CO poisoning, and N₂ bubbles in the blood (decompression sickness, air embolism)."],
+    ["A patient's FiO₂ is raised from 40% to 60%, then to 80%, but the PaO₂ and SaO₂ barely change. This most likely indicates:","Shunting",["Hypoventilation","Anemic hypoxemia","Oxygen-induced hypoventilation"],"When PaO₂/SaO₂ don't respond to more O₂, it's a shunt — blood passes alveoli that aren't ventilated, so extra O₂ never reaches it (refractory hypoxemia)."],
+    ["An elderly patient keeps pressing the MDI before inhaling, and the mist hits the back of the throat. What should the RCP add to improve medication delivery?","A spacer",["A nasal cannula","A heated humidifier","A peak flow meter"],"A spacer is used when the patient can't coordinate inhaling with pressing the MDI. It holds the medication so the patient can breathe it in."],
+    ["A stable outpatient with asthma needs a maintenance bronchodilator. What is the preferred delivery method?","Metered-dose inhaler (MDI)",["Small volume nebulizer","Ultrasonic nebulizer","Large volume nebulizer"],"For stable patients, the MDI is the preferred method: quick, portable, and cheap."],
+    ["When should the patient press down on the MDI canister?","As they begin to inhale slowly and deeply",["At the end of a normal exhalation, before inhaling","After a full breath in, during the breath hold","While exhaling forcefully"],"Actuate the MDI as the patient is inhaling, so the drug is carried into the airways."],
+    ["An order reads “Albuterol via SVN” with no dose or frequency listed. The RCP should:","Call the MD to clarify before giving it",["Give the usual dose of 2.5 mg QID","Ask the RN to fill in the missing dose","Give one treatment now, clarify later"],"This order is incomplete. Never fill in the blanks yourself — call the MD before giving it."],
+    ["A patient is having an acute asthma attack. Which medication and dose is the rescue treatment?","Albuterol 2.5 mg via SVN",["An inhaled corticosteroid","A long-acting bronchodilator such as salmeterol","Acetylcysteine (Mucomyst)"],"Albuterol (2.5 mg unit dose via SVN) is the short-acting rescue bronchodilator. Steroids and long-acting drugs are for maintenance, not rescue. <span class='tag'>extra</span>"],
+    ["An asthma patient is going home and wants to monitor airway patency twice a day. Which device should the RCP teach?","Peak flow meter",["Incentive spirometer","Flutter valve","Spacer"],"Peak flow meters monitor airway patency in asthmatics: at home, morning and night."],
+    ["A patient's peak flow is normal for them. Which zone of their asthma action plan is this?","Green zone",["Yellow zone","Red zone","Orange zone"],"Green = normal: about 80–100% of the patient's personal best. Continue the usual plan. <span class='tag'>extra</span>"],
+    ["A patient's peak flow is severely decreased, well below 50% of their personal best. The patient is in the:","Red zone — a medical alert, so give the rescue drug and get help",["Green zone — continue routine medications","Yellow zone — this is normal day-to-day variation","Red zone — recheck in 24 hours"],"Red zone = severely decreased (&lt; 50% of personal best). Give the rescue medication and get medical help now. <span class='tag'>extra</span>"],
+    ["Before delivering any medication to a patient, the RCP's first step is to:","Check the MD order",["Set up the nebulizer","Measure a pre-treatment peak flow","Give the medication and document it"],"Always check the order first: right patient, drug, dose, route, and frequency. Then assess and treat."],
+    ["A patient has a PaO₂ of 95 mm Hg and an SpO₂ of 98%, but a hemoglobin of 6.5 g/dL. The patient is tachycardic and short of breath. This is:","Anemic hypoxemia",["Shunting","Oxygen-induced hypoventilation","Absorption atelectasis"],"With an Hb below 7 g/dL, there isn't enough hemoglobin to carry O₂. PaO₂ and SpO₂ look normal, but O₂ content is low."],
+    ["Post-op day 1, a patient has decreased breath sounds in the bases and a low-grade fever after abdominal surgery. Which therapy is most appropriate?","Incentive spirometry",["A heat moisture exchanger","Peak flow monitoring","A spacer with an MDI"],"These findings suggest atelectasis. Incentive spirometry is used to prevent and treat it after surgery."],
+    ["A patient is scheduled for open-heart surgery tomorrow morning. When should the RCP teach incentive spirometry?","Today, before the surgery",["Right after extubation","On post-op day 3","Only if atelectasis develops"],"Teach IS pre-op. You learn the patient's goal before pain and sedation get in the way."],
+    ["Which instruction should the RCP give a patient using an incentive spirometer?","Take a deep breath in, try to hold it for 3–5 seconds, then fully exhale",["Take a deep breath in, then blow out hard and fast into the mouthpiece","Take a quick breath in and hold it for 20 seconds","Breathe normally through the mouthpiece for 10 minutes"],"IS: deep breath in, hold 3–5 seconds, exhale fully, at least 10 times an hour. “Blow out hard and fast” is the peak flow instruction."],
+    ["A patient's incentive spirometer shows 2,000 mL on a good breath. This reading reflects the patient's:","Inspiratory capacity",["Functional residual capacity","Residual volume","Expiratory reserve volume"],"IS measures V<sub>T</sub> + IRV = inspiratory capacity."],
+    ["Post-operative pneumonia most often develops from:","Retained secretions",["Doing incentive spirometry too often","Low-flow O₂ at 2 L/min","Bronchodilator treatments"],"Retained secretions plug the airways, which leads to atelectasis and then pneumonia. That's why IS and airway clearance matter after surgery."],
+    ["A trach patient on a mechanical ventilator needs airway humidification during a short trip to CT. Which device should the RCP use?","Heat moisture exchanger (HME)",["Bubble humidifier","Face tent","Large volume nebulizer with an aerosol mask"],"An HME humidifies the airway of a ventilated trach patient and is meant for short-term use, like a transport."],
+    ["Which humidifier is used with heated-wire circuits on high-flow nasal cannulas and mechanical ventilators?","Heated passover humidifier",["Bubble humidifier","Heat moisture exchanger","Ultrasonic nebulizer"],"Heated passover humidifiers run with heated-wire circuits for high-flow systems: 100% body humidity, 37 °C, 44 mg/L."],
+    ["Which statement about heat moisture exchangers is correct?","They are used for short-term humidification of ventilated patients",["They provide 100% body humidity at 44 mg/L","They are best for patients with thick, copious secretions","They must be filled with sterile water"],"HMEs are passive, short-term devices with about 70% efficiency (18–34 mg/L). Thick or copious secretions are a reason to switch to a heated humidifier."],
+    ["After a steroid inhaler or nebulizer, the RCP tells the patient to rinse their mouth and spit. This prevents:","Oral thrush",["Tachycardia","Bronchospasm","Hoarseness from the spacer"],"Inhaled steroids left in the mouth can cause oral thrush (a yeast infection), so rinse and spit after every dose."],
+    ["A cystic fibrosis patient wants a mucus clearance device they can use on their own at home. The RCP should recommend:","Flutter valve therapy",["Incentive spirometry","A peak flow meter","A spacer"],"The flutter valve is a handheld airway clearance device patients can use at home. The vibrating ball helps loosen mucus."]
+  ]
+},
+
+/* ---------------------------------------------------------------- */
+{ id:"o2t", name:"Oxygen Therapy", short:"O₂ Therapy",
+  notes:[
+    {topic:"Goals & When to Give O₂", items:[
+      "<b>Goals:</b> relieve hypoxemia (<b>PaO₂ &gt; 60 on an FiO₂ &lt; 50%</b>), decrease work of breathing, decrease myocardial work.",
+      "<b>Documented hypoxemia:</b> by ABG or pulse oximetry — <b>PaO₂ &lt; 60</b> or <b>SaO₂ &lt; 90%</b>.",
+      "Also given in clinical situations where hypoxemia is likely (severe trauma, chest pain/MI, pneumonia, asthma, COPD) and short-term, e.g., anesthesia recovery.",
+      "Oxygen is a <b>drug with toxic effects</b>: too little → hypoxia and death; too much → lung tissue destruction. Monitor carefully."]},
+    {topic:"Signs of Acute Hypoxemia", html:
+      "<table class='plain'><thead><tr><th>Cardiac</th><th>Respiratory</th><th>Neurologic</th></tr></thead><tbody>"+
+      "<tr><td>Tachycardia<br>Hypertension<br>Arrhythmias<br>Diaphoresis</td><td>Tachypnea<br>Dyspnea<br>Accessory muscle use<br>Cyanosis</td><td>Restlessness<br>Disorientation<br>Headaches<br>Impaired judgment</td></tr></tbody></table>"+
+      "<p class='muted' style='margin:10px 0 0'>Chronic signs: clubbing, cardiac arrhythmias, cardiomegaly, heart failure.</p>"},
+    {topic:"Evaluating the Patient", items:[
+      "More than just an SpO₂ or ABG — look at the whole picture: comfort, respiratory rate, WOB/HR, mental state, pulse oximetry, and the patient's subjective response (especially color and WOB)."]},
+    {topic:"Control of Breathing", items:[
+      "Involuntary centers in the <b>pons and medulla</b>. <b>Medulla</b> = primary regulation of respiration; <b>pons</b> = regulates the pattern.",
+      "<b>Central chemoreceptors</b> (brain) respond rapidly to changes in <b>PaCO₂</b> — the <b>primary stimulus</b> to breathe in healthy people.",
+      "<b>Peripheral chemoreceptors</b> (<b>carotid bodies and aortic arch</b>) respond to a drop in PaO₂ to about <b>60 mm Hg</b> (normal PaO₂ = 80–100). They also respond to a rise in PaCO₂ and a drop in pH."]},
+    {topic:"The 4 Hazards of O₂ Therapy", items:[
+      "<b>1. Oxygen-induced hypoventilation:</b> COPD patients who retain CO₂ have blunted central chemoreceptors and breathe on their peripheral chemoreceptors (the <b>hypoxic drive</b>). Too much O₂ suppresses that drive → hypoventilation → rising PaCO₂. <b>Always treat the hypoxia first</b> — never withhold O₂ from a hypoxic patient.",
+      "<b>2. Absorption atelectasis:</b> 100% O₂ washes out <b>nitrogen</b> (79% of alveolar gas, which holds the alveoli open). O₂ diffuses into the blood, the alveolus collapses → <b>shunt</b> unit (perfused but not ventilated). Post-op patients are at risk (low V<sub>T</sub>, sedation, pain).",
+      "<b>3. Retinopathy of prematurity (ROP / retrolental fibroplasia):</b> blindness in premature infants from high FiO₂. High PaO₂ is the major cause — keep <b>PaO₂ &lt; 80 mm Hg</b>.",
+      "<b>4. Oxygen toxicity:</b> long-term exposure to high PO₂ (<b>&gt; 24–72 hours</b>). Goal: keep <b>FiO₂ &lt; 50%</b>. CXR shows bronchopneumonia with patchy infiltrates."]},
+    {topic:"Oxygen Toxicity in Detail", items:[
+      "<b>First 24–72 hours:</b> destruction of endothelial cells and type I alveolar cells, destruction of the basement membrane, edema, hemorrhage, alveolar thickening, fibrin, and ↓ surfactant.",
+      "<b>Later:</b> type II cells increase, then scarring, fibrosis, shunting, hypoxemia, and alveolar membrane thickening.",
+      "<b>Vicious cycle:</b> ↑ FiO₂ → O₂ toxicity → ↑ shunting → low PaO₂ → ↑ FiO₂ …",
+      "<b>Avoid it:</b> limit 100% O₂ to <b>&lt; 24 hours</b> when possible. If high FiO₂ is needed, bring FiO₂ to <b>&lt; 50% within 5 days</b>."]},
+    {flag:"<b>Heads-up on the phase names:</b> the slides label the early (24–72 h) destruction phase “Proliferation” and the later type II/fibrosis phase “Exudative.” Most textbooks, including Egan, use the reverse: exudative first, then proliferative. The flashcards and quiz ask about what happens and when, not the phase names. Check with your professor which names she expects."},
+    {topic:"Misconceptions & Benefits", items:[
+      "<b>Common misconceptions:</b> O₂ is addictive; more is better; SOB is always caused by lack of O₂; home O₂ patients are confined to the home; O₂ will burn and is explosive (it supports combustion but isn't itself flammable or explosive).",
+      "<b>Benefits for COPD:</b> better tolerance for ADLs, ↓ pulmonary hypertension, ↓ erythrocytosis and polycythemia, ↓ mortality and morbidity, improved neurophysiologic function."]}
+  ],
+  cards:[
+    ["Goals & Indications","What are the three goals of oxygen therapy?","Relieve hypoxemia, decrease WOB, decrease myocardial work."],
+    ["Goals & Indications","What is the target for relieving hypoxemia?","<b>PaO₂ &gt; 60</b> on an <b>FiO₂ &lt; 50%</b>."],
+    ["Goals & Indications","What values document hypoxemia?","<b>PaO₂ &lt; 60</b> or <b>SaO₂ &lt; 90%</b> (by ABG or pulse ox)."],
+    ["Signs of Hypoxemia","Cardiac signs of acute hypoxemia?","Tachycardia, hypertension, arrhythmias, diaphoresis."],
+    ["Signs of Hypoxemia","Respiratory signs of acute hypoxemia?","Tachypnea, dyspnea, accessory muscle use, cyanosis."],
+    ["Signs of Hypoxemia","Neurologic signs of acute hypoxemia?","Restlessness, disorientation, headaches, impaired judgment."],
+    ["Signs of Hypoxemia","Chronic signs of hypoxemia?","Clubbing, cardiac arrhythmias, cardiomegaly, heart failure."],
+    ["Evaluation","What do you evaluate besides SpO₂?","Comfort, RR, WOB/HR, mental state, pulse ox, and the patient's subjective response — the whole picture."],
+    ["Control of Breathing","Which brain center is the primary regulator of respiration? Which regulates the pattern?","<b>Medulla</b> = primary regulation. <b>Pons</b> = pattern."],
+    ["Control of Breathing","What is the primary stimulus to breathe in a healthy person?","Rising <b>PaCO₂</b>, sensed by the <b>central chemoreceptors</b>."],
+    ["Control of Breathing","Where are the peripheral chemoreceptors and what do they respond to?","<b>Carotid bodies and aortic arch</b>. Respond to PaO₂ falling to about <b>60 mm Hg</b> (also ↑PaCO₂ and ↓pH)."],
+    ["Hazards","Name the 4 hazards of oxygen therapy.","<ol style='margin:0;padding-left:20px'><li>O₂-induced hypoventilation</li><li>Absorption atelectasis</li><li>Retinopathy of prematurity (RLF)</li><li>Oxygen toxicity</li></ol>"],
+    ["Hazards","Which patients are at risk for O₂-induced hypoventilation, and why?","COPD CO₂ retainers. Their central chemoreceptors are blunted, so they breathe on the <b>hypoxic drive</b>. Too much O₂ suppresses it → hypoventilation, ↑PaCO₂."],
+    ["Hazards","A hypoxic COPD patient — do you withhold O₂?","<b>Never.</b> Always treat the hypoxia first, and monitor closely."],
+    ["Hazards","How does 100% O₂ cause absorption atelectasis?","It washes out <b>nitrogen</b>, which holds the alveoli open. O₂ is absorbed, the alveolus collapses → <b>shunt</b>."],
+    ["Hazards","What PaO₂ limit helps prevent ROP in premature infants?","Keep <b>PaO₂ &lt; 80 mm Hg</b>."],
+    ["Hazards","How long an exposure causes O₂ toxicity, and what FiO₂ do you aim to stay under?","High PO₂ for <b>&gt; 24–72 hours</b>. Keep <b>FiO₂ &lt; 50%</b>."],
+    ["Hazards","What does O₂ toxicity look like on a chest X-ray?","Bronchopneumonia — <b>patchy infiltrates</b>."],
+    ["O₂ Toxicity","What happens to the lung in the first 24–72 hours of O₂ toxicity?","Endothelial and <b>type I</b> cells destroyed, basement membrane destroyed, edema, hemorrhage, alveolar thickening, fibrin, ↓ surfactant."],
+    ["O₂ Toxicity","What happens in the later phase of O₂ toxicity?","↑ <b>type II</b> cells, scarring, <b>fibrosis</b>, shunting, hypoxemia, alveolar membrane thickening."],
+    ["O₂ Toxicity","Describe the O₂ toxicity vicious cycle.","↑ FiO₂ → O₂ toxicity → ↑ shunting → low PaO₂ → ↑ FiO₂ …"],
+    ["O₂ Toxicity","Two rules for avoiding O₂ toxicity?","Limit 100% O₂ to <b>&lt; 24 h</b> when possible. If high FiO₂ is needed, bring it to <b>&lt; 50% within 5 days</b>."],
+    ["Misconceptions & Benefits","Name common misconceptions about O₂ therapy.","O₂ is addictive; more is better; SOB always means lack of O₂; home O₂ patients are homebound; O₂ burns/explodes."],
+    ["Misconceptions & Benefits","Benefits of O₂ therapy for the COPD patient?","Better ADL tolerance, ↓ pulmonary hypertension, ↓ erythrocytosis/polycythemia, ↓ mortality & morbidity, improved neurophysiologic function."]
+  ],
+  quiz:[]
+},
+
+/* ---------------------------------------------------------------- */
+{ id:"o2d", name:"Oxygen Delivery Devices", short:"O₂ Devices",
+  notes:[
+    {topic:"3 Types of Systems", items:[
+      "<b>Low flow</b> — variable performance; FiO₂ is <b>not stable</b>.",
+      "<b>Reservoir systems</b> — higher FiO₂s.",
+      "<b>High flow</b> — fixed performance; FiO₂ is <b>stable</b>.",
+      "Choose a device by the FiO₂ it delivers and patient comfort. Match the clinical goal to the device's performance."]},
+    {topic:"Device Cheat Sheet", html:
+      "<p class='muted swipe'>Swipe the table sideways to see “Best use” →</p><div style='overflow-x:auto'><table class='dev'><thead><tr><th>Device</th><th>Flow</th><th>FiO₂</th><th>Best use</th></tr></thead><tbody>"+
+      "<tr><td>Nasal cannula</td><td>¼–8 L/min</td><td>22–45% <i>var</i></td><td>Stable pts needing low FiO₂, home care, long-term O₂</td></tr>"+
+      "<tr><td>Nasal catheter</td><td>¼–8 L/min</td><td>22–45% <i>var</i></td><td>Infants on long-term O₂, bronchoscopy</td></tr>"+
+      "<tr><td>Reservoir cannula</td><td>¼–4 L/min</td><td>22–35% <i>var</i></td><td>Home care, ambulatory pts</td></tr>"+
+      "<tr><td>Simple mask</td><td>5–12 L/min</td><td>35–50% <i>var</i></td><td>ER, short-term, moderate FiO₂</td></tr>"+
+      "<tr><td>Partial rebreather</td><td>10–15 L/min<br><span class='muted'>keep bag inflated</span></td><td>35–60% <i>var</i></td><td>ER, short-term, moderate FiO₂</td></tr>"+
+      "<tr><td>Non-rebreather</td><td>10–15 L/min<br><span class='muted'>keep bag inflated</span></td><td>55–70% <i>var</i><br><span class='muted'>clinically ~100%</span></td><td>ER, short-term, high FiO₂</td></tr>"+
+      "<tr><td>Air-entrainment (Venturi) mask</td><td>Varies with FiO₂</td><td>24–50% <i>fixed</i></td><td>Unstable pts needing a stable FiO₂; COPD</td></tr>"+
+      "<tr><td>Air-entrainment nebulizer</td><td>10–15 L/min</td><td>28–100% <i>fixed</i></td><td>Pts with artificial airways</td></tr>"+
+      "<tr><td>Blender</td><td>High, &gt;60 L/min</td><td>21–100% <i>fixed</i></td><td>Pts needing high FiO₂</td></tr>"+
+      "<tr><td>Oxyhood</td><td>&gt;7 L/min <span class='muted'>(washes out CO₂)</span></td><td>21–100% <i>fixed</i></td><td>Infants needing O₂</td></tr>"+
+      "<tr><td>Oxygen tent</td><td>8–15 L/min</td><td>40–50% <i>var</i></td><td>Infants/small children needing humidity + O₂</td></tr>"+
+      "</tbody></table></div>"},
+    {topic:"Device Pros & Cons", items:[
+      "<b>Nasal cannula:</b> easy, cheap, well tolerated, all ages. Cons: unstable FiO₂, easily dislodged, dryness, mucosal bleeding.",
+      "<b>Nasal catheter:</b> stable, disposable. Cons: hard to insert, deviated septum, mucosal drying.",
+      "<b>Reservoir cannula:</b> uses less O₂ (cost savings), more comfortable at lower flows. Cons: unattractive, cumbersome, must be replaced often (<b>every 3 weeks</b>), breathing pattern affects performance.",
+      "<b>Simple / partial / non-rebreather masks:</b> easy, cost effective. Cons: uncomfortable, can't eat with them on, vomiting & aspiration risk.",
+      "<b>Venturi mask:</b> precise, stable FiO₂ — good for COPD. Cons: <b>adults only</b>, noisy, remove to eat, FiO₂ varies with <b>back pressure</b>.",
+      "<b>Air-entrainment nebulizer:</b> humidity therapy; can be heated. Cons: FiO₂ varies with back pressure; infection risk (<b>Pseudomonas aeruginosa</b>).",
+      "<b>Blender:</b> full FiO₂ range. Cons: needs <b>50 psig air and O₂</b>; blender failure is common.",
+      "<b>Oxyhood:</b> full FiO₂ range, heat/humidity. Cons: must be disinfected, not all disposable.",
+      "<b>Oxygen tent:</b> cool mist for infants/children. Cons: leaks, limits access to patient, fire hazard, must be cleaned, not disposable."]},
+    {topic:"Computing Total Flow (Air-Entrainment)", items:[
+      "<b>Air:O₂ ratio</b> = (100 − FiO₂) ÷ (FiO₂ − 21).",
+      "Example, <b>50%</b>: (100 − 50) ÷ (50 − 21) = 50 ÷ 29 ≈ <b>1.7 : 1</b>.",
+      "Add the parts: 1.7 + 1 = <b>2.7</b>.",
+      "Multiply by the O₂ flow: 2.7 × 15 L/min ≈ <b>41 L/min</b> total flow."]},
+    {topic:"Heliox", items:[
+      "Helium is about <b>7× lighter</b> than air (air 1.293 g/L vs heliox 0.429 g/L) → less turbulent flow → ↓ WOB (Barach, 1935).",
+      "<b>Indications:</b> acute upper airway obstruction, post-extubation stridor, viral croup, pediatric trauma.",
+      "Always mixed with O₂: <b>80/20</b> or <b>70/30</b> (70/30 helps correct hypoxia).",
+      "Needs a <b>closed system</b>: non-rebreather or simple mask, or a cuffed airway (ET tube, trach).",
+      "<b>Correction factors</b> (O₂ flowmeter reading × factor = actual flow): <b>80/20 = 1.8</b>, <b>70/30 = 1.6</b>. E.g., 10 L/min × 1.8 = 18 L/min.",
+      "<b>Troubleshooting:</b> poor vehicle for aerosol; less effective cough (laminar vs turbulent flow); high-pitched voice; hypoxia uncommon; needs adequate flow."]},
+    {topic:"Hyperbaric Oxygen (HBO)", items:[
+      "O₂ at <b>&gt; 1 atmosphere</b>. 1 ATA = <b>760 torr</b>. Usually <b>2–3 ATA</b> → hyperoxia; plasma O₂ rises about <b>7×</b>.",
+      "<b>Boyle's law:</b> trapped gas shrinks as pressure rises (3× pressure → bubble reduced by ⅔) — used for air embolism and decompression sickness.",
+      "<b>Effects:</b> ↑ PaO₂, flushes out CO, vasoconstriction (↓ edema), antibacterial (restores WBC function), new capillary beds, collagen and osteoclast stimulation, ↓ N₂ bubbles.",
+      "<b>Indications:</b> decompression sickness, air/gas embolism, CO & cyanide poisoning, clostridial gangrene, necrotizing soft-tissue infections, ischemic skin grafts, thermal burns, radiation tissue damage, crush injuries, problem wounds, refractory osteomyelitis.",
+      "<b>CO poisoning:</b> treatment threshold is usually 20–25% COHb, lower for kids, pregnant women, unconscious patients, long exposure. HBO ↓ CO half-life, ↓ cerebral edema.",
+      "<b>Complications:</b> barotrauma (ears, sinuses, TM rupture), pneumothorax, air embolism, O₂ toxicity (CNS), fire, sudden decompression, claustrophobia.",
+      "<b>Safety:</b> nothing in the chamber — no hairspray, perfume, lotion, toys, or paper. Cotton or linen only.",
+      "<b>Standard treatment:</b> <b>2.4 ATM for 90 minutes</b>. PaO₂ can stay high for up to 6 h. For ET tube/trach cuffs, <b>replace the air with saline</b>."]},
+    {topic:"Home O₂", items:[
+      "<b>Qualifies:</b> <b>PaO₂ &lt; 55 mm Hg</b> or <b>SaO₂ ≤ 88%</b> on room air (21%), or with cor pulmonale/CHF, or during ambulation, sleep, or exercise.",
+      "<b>Concentrators:</b> molecular sieve — sodium-aluminum silicate pellets absorb N₂ and CO₂. Deliver <b>92–95% O₂</b>. Ideal for low-flow NC at <b>1–3 L/min</b>.",
+      "Liquid O₂ for portable patients. Pulse/demand devices. Use return demonstrations. Monitor with care plans, equipment checks, and backup systems."]},
+    {topic:"Oxygen Analyzers", items:[
+      "<b>Polarographic:</b> uses the <b>Clark electrode</b>. Measures PO₂ but displays %O₂. <b>Quick response.</b> Affected by altitude/pressure and water.",
+      "<b>Galvanic fuel cell:</b> cells are expensive and last about <b>1 year</b>. Measures PO₂, displays %O₂. Used <b>continuously</b>. PB and <b>PEEP increase</b> readings; <b>moisture decreases</b> readings.",
+      "<b>Calibrate:</b> expose to room air (adjust to <b>21%</b>), then to 100% O₂ (adjust to <b>100%</b>).",
+      "<b>Common errors:</b> low batteries, sensor depletion (check fuel-cell dates; Clark electrode electrolyte gel), electronic failure. If it doesn't work, <b>take it out of service</b>.",
+      "Analyze by spot sampling, every shift, or continuously, and whenever FiO₂ changes."]}
+  ],
+  cards:[
+    ["Systems","What are the 3 types of O₂ delivery systems?","<b>Low flow</b> (variable), <b>reservoir</b> (higher FiO₂), <b>high flow</b> (fixed, stable FiO₂)."],
+    ["Systems","Low flow vs high flow — which gives a stable FiO₂?","<b>High flow</b> (fixed performance). Low flow FiO₂ is variable."],
+    ["Low Flow","Nasal cannula flow and FiO₂?","<b>¼–8 L/min</b>, <b>22–45%</b> (variable)."],
+    ["Low Flow","Nasal cannula disadvantages?","Unstable FiO₂, easily dislodged, dryness, mucosal bleeding."],
+    ["Low Flow","Nasal catheter best uses?","Infants on long-term O₂, and <b>bronchoscopy</b>."],
+    ["Low Flow","Reservoir cannula flow, FiO₂, and replacement interval?","<b>¼–4 L/min</b>, <b>22–35%</b>. Replace about every <b>3 weeks</b>."],
+    ["Reservoir Masks","Simple mask flow and FiO₂?","<b>5–12 L/min</b>, <b>35–50%</b>."],
+    ["Reservoir Masks","Partial rebreather flow and FiO₂?","<b>10–15 L/min</b> (keep bag inflated), <b>35–60%</b>."],
+    ["Reservoir Masks","Non-rebreather flow and FiO₂?","<b>10–15 L/min</b> (keep bag inflated), <b>55–70%</b> — clinically ~100%."],
+    ["Reservoir Masks","Disadvantages shared by the masks?","Uncomfortable, can't eat with them on, vomiting & aspiration risk."],
+    ["High Flow","Air-entrainment (Venturi) mask FiO₂ range?","<b>24–50%</b>, fixed."],
+    ["High Flow","Venturi mask disadvantages?","Adults only, noisy, remove to eat, FiO₂ varies with <b>back pressure</b>."],
+    ["High Flow","Venturi mask best use?","Unstable patients who need a <b>stable FiO₂</b> — e.g., COPD."],
+    ["High Flow","Formula for the air:O₂ entrainment ratio?","(100 − FiO₂) ÷ (FiO₂ − 21)"],
+    ["High Flow","Total flow of a 50% Venturi at 15 L/min?","Ratio 1.7:1 → 2.7 parts × 15 ≈ <b>41 L/min</b>."],
+    ["High Flow","Air-entrainment nebulizer: flow, FiO₂, best use?","<b>10–15 L/min</b>, <b>28–100%</b>. Best for <b>artificial airways</b>."],
+    ["High Flow","Infection risk with air-entrainment nebulizers?","Nosocomial infection — <b>Pseudomonas aeruginosa</b>."],
+    ["High Flow","Blender flow, FiO₂, and requirement?","&gt; 60 L/min, <b>21–100%</b>. Needs <b>50 psig air and O₂</b>. Failure is common."],
+    ["Enclosures","Oxyhood minimum flow, and why?","<b>&gt; 7 L/min</b> to wash out CO₂."],
+    ["Enclosures","Oxygen tent flow and FiO₂?","<b>8–15 L/min</b>, <b>40–50%</b> (variable)."],
+    ["Enclosures","Oxygen tent disadvantages?","Leaks, limits access to patient, fire hazard, must be cleaned, not disposable."],
+    ["Heliox","Why does heliox reduce WOB?","Helium is ~<b>7× lighter</b> than air → less turbulent flow."],
+    ["Heliox","Heliox indications?","Acute upper airway obstruction, post-extubation stridor, viral croup, pediatric trauma."],
+    ["Heliox","Heliox mixtures and correction factors?","<b>80/20 = 1.8</b>, <b>70/30 = 1.6</b>. Flowmeter × factor = actual flow."],
+    ["Heliox","Heliox delivery requirement?","A <b>closed system</b> — NRB or simple mask, or a cuffed ET tube/trach."],
+    ["Heliox","Heliox troubleshooting problems?","Poor aerosol vehicle, weaker cough, high-pitched voice, need adequate flow."],
+    ["HBO","Define hyperbaric O₂. What is 1 ATA?","O₂ at &gt; 1 atmosphere. 1 ATA = <b>760 torr</b>. Usually 2–3 ATA."],
+    ["HBO","Which gas law explains HBO shrinking bubbles?","<b>Boyle's law</b> — volume falls as pressure rises."],
+    ["HBO","Name 5 HBO indications.","Decompression sickness, air/gas embolism, CO & cyanide poisoning, clostridial gangrene, necrotizing soft-tissue infections (also burns, crush injuries, grafts, radiation damage, osteomyelitis)."],
+    ["HBO","HBO complications?","Barotrauma (ears/sinus/TM), pneumothorax, air embolism, CNS O₂ toxicity, fire, sudden decompression, claustrophobia."],
+    ["HBO","Standard HBO treatment?","<b>2.4 ATM for 90 minutes</b>."],
+    ["HBO","Intubated/trach patient in HBO — what about the cuff?","Replace the air in the cuff with <b>saline</b>."],
+    ["HBO","What can go in the chamber?","Nothing extra — no hairspray, perfume, lotion, toys, or paper. Cotton or linen only."],
+    ["Home O₂","Criteria for home O₂?","<b>PaO₂ &lt; 55</b> or <b>SaO₂ ≤ 88%</b> on room air (or cor pulmonale/CHF, or desaturation with ambulation, sleep, or exercise)."],
+    ["Home O₂","How does an O₂ concentrator work, and what does it deliver?","Molecular sieve (sodium-aluminum silicate) absorbs N₂ and CO₂. Delivers <b>92–95%</b>; ideal for <b>1–3 L/min NC</b>."],
+    ["Analyzers","Polarographic analyzer — key features?","<b>Clark electrode</b>, quick response, affected by altitude/pressure and water."],
+    ["Analyzers","Galvanic fuel cell analyzer — key features?","Cell lasts ~<b>1 year</b>, used continuously. PEEP <b>↑</b> readings, moisture <b>↓</b> readings."],
+    ["Analyzers","How do you calibrate an O₂ analyzer?","Room air → <b>21%</b>, then 100% O₂ → <b>100%</b>. Adjust if off."],
+    ["Analyzers","Analyzer won't work after checking batteries and sensor — now what?","<b>Take it out of service.</b>"]
+  ],
+  quiz:[]
+},
+
+/* ---------------------------------------------------------------- */
+{ id:"aer", name:"Humidity & Aerosol Therapy", short:"Humidity & Aerosol",
+  notes:[
+    {topic:"Why Humidify?", items:[
+      "The <b>upper airway</b> normally warms and humidifies gas. Gas is normally 100% saturated by the <b>carina</b>.",
+      "<b>Oxygen is an anhydrous (dry) gas.</b> Prolonged dry gas → dry, crusted secretions over the mucosa.",
+      "At-risk patients: fever, dehydration, thick secretions, and <b>artificial airways</b> (which bypass the normal upper-airway functions).",
+      "<b>Indications for humidity therapy:</b> giving medical gases, delivering gas to a bypassed upper airway, thick secretions in non-intubated patients, sputum inductions.",
+      "Systemic hydration is the most effective way to thin secretions; adding (and heating) humidity also helps."]},
+    {topic:"Humidity Basics", items:[
+      "<b>Humidity</b> = molecular water in the air. <b>Absolute humidity</b> = the actual water content in a given volume of gas.",
+      "<b>Normal airway:</b> the nose warms, filters, and humidifies, followed by the pharynx, trachea, and bronchi.",
+      "<b>At the carina:</b> <b>37 °C</b>, <b>100% saturated</b>, <b>44 mg H₂O/L</b>, water vapor pressure <b>47 mm Hg</b>."]},
+    {topic:"Signs of Inadequate Humidification", items:[
+      "Atelectasis, dry nonproductive cough, ↑ airway resistance, ↑ infection, ↑ WOB, substernal pain and airway dryness, thick dehydrated secretions."]},
+    {topic:"How Humidifiers Work", items:[
+      "<b>3 principles:</b> <b>temperature</b> (warmer gas holds more water), <b>surface area</b> (more contact → more humidity), <b>contact time</b> (lower flow → more time → more humidity).",
+      "<b>Ideal characteristics:</b> large surface contact area, <b>small</b> bubbles, reservoir <b>full</b>, heated, safety pop-off.",
+      "<b>Active</b> humidifiers add heat and/or water: bubble, passover, bland aerosol nebulizers, vaporizers. <b>Passive</b> = HME (recycles the patient's exhaled heat and moisture)."]},
+    {topic:"Humidifier Types", items:[
+      "<b>Bubble humidifier:</b> gas bubbles through water via a diffusion head (smaller bubbles). More efficient when <b>full</b>. Used for <b>low-flow</b> O₂ (slide notes: nasal cannulas and simple masks). Nosocomial infection risk.",
+      "<b>Passover humidifier:</b> gas passes over heated water. Good for <b>high flows / ventilators</b>. External temperature probe at the patient's airway. Don't drain condensate (“rain-out”) back into the heater. Watch for shocks, sparks, fire.",
+      "<b>HME:</b> conserves exhaled heat and moisture and returns it on the next breath. Small chamber with <b>hygroscopic</b> layers. <b>Short-term use only.</b> Provides about 50–70% of body humidity.",
+      "<b>HME hazards:</b> under-hydration, copious secretions, <b>mucus plugging</b> (↑ resistance and airway pressures), <b>↑ deadspace</b>. Plus: saves on circuit changes (no rain-out)."]},
+    {topic:"Aerosol Basics", items:[
+      "<b>Aerosol</b> = liquid or solid particles suspended in a gas (a mist), produced by pneumatic or electric nebulizers.",
+      "<b>Stability</b> depends on particle size and nature. <b>MMAD</b> = the size where 50% of the particles are heavier and 50% are lighter.",
+      "<b>Where particles land:</b> <b>&lt; 5 µm</b> → lungs; <b>5–10 µm</b> → proximal airways; <b>&gt; 10 µm</b> → nose & mouth. Only about <b>20%</b> actually deposits in the lungs.",
+      "<b>Hygroscopic</b> particles grow in size. Inertia/kinetic energy and airway contour also affect deposition.",
+      "<b>Indications:</b> humidify artificial airways (cool or heated), mobilize secretions, give respiratory medications."]},
+    {topic:"Bland Aerosol Therapy", items:[
+      "<b>Indications:</b> upper airway edema (<b>cool</b> bland aerosol) — laryngotracheobronchitis (croup), subglottic edema, post-extubation edema, post-op upper airway; bypassed upper airway; sputum specimens or mobilizing secretions.",
+      "<b>Contraindications:</b> bronchoconstriction; history of airway hyperresponsiveness.",
+      "<b>Hazards:</b> wheezing/bronchospasm, infection, overhydration, discomfort, caregiver exposure to airborne contagions, airway wall edema."]},
+    {topic:"Hazards & Troubleshooting", items:[
+      "<b>Nosocomial infection:</b> <b>Pseudomonas aeruginosa</b>. Change nebulizers <b>every 24 hours</b>; always use <b>sterile water</b>.",
+      "<b>Overhydration</b> — watch trach patients.",
+      "<b>Tracheal burns</b> with heated aerosol — monitor temperature.",
+      "<b>Reactive airways</b>: cough, bronchospasm → give a bronchodilator.",
+      "<b>Condensation:</b> risk to patients and caregivers, wastes water, can block flow, can be aspirated. Use water traps and heated circuits, position tubing to drain <b>away from the patient</b> into the trash, never back into the nebulizer."]},
+    {topic:"Ultrasonic Nebulizer (USN)", items:[
+      "<b>Piezoelectric transducer</b> converts electrical energy to mechanical (ultrasonic) waves, creating a geyser effect. Frequency <b>1.35 MHz</b>.",
+      "<b>Amplitude</b> (power unit) controls <b>output</b>. A <b>fan</b> produces the flow.",
+      "<b>Hazards:</b> bronchospasm, overhydration (“drowning”), expensive, <b>no O₂</b> (must titrate O₂ separately), condensation in tubing."]}
+  ],
+  cards:[
+    ["Why Humidify","Why does medical oxygen need humidification?","It's an <b>anhydrous (dry)</b> gas. Prolonged dry gas → dry, crusted secretions."],
+    ["Why Humidify","Which patients are at extra risk from dry gas?","Fever, dehydration, thick secretions, and <b>artificial airways</b> (bypass the upper airway)."],
+    ["Why Humidify","Indications for humidity therapy?","Medical gases, bypassed upper airway, thick secretions in non-intubated patients, sputum induction."],
+    ["Humidity Basics","Define absolute humidity.","The <b>actual water content</b> in a given volume of gas."],
+    ["Humidity Basics","Conditions at the carina?","<b>37 °C</b>, <b>100% saturated</b>, <b>44 mg/L</b>, water vapor pressure <b>47 mm Hg</b>."],
+    ["Humidity Basics","Signs of inadequate humidification?","Atelectasis, dry nonproductive cough, ↑ Raw, ↑ infection, ↑ WOB, substernal pain/dryness, thick secretions."],
+    ["Humidifiers","The 3 principles affecting humidifier output?","<b>Temperature</b>, <b>surface area</b>, <b>contact time</b>."],
+    ["Humidifiers","Does a higher or lower flow give more humidity? Why?","<b>Lower</b> flow — more contact time with the water."],
+    ["Humidifiers","Ideal humidifier characteristics?","Large surface area, <b>small</b> bubbles, reservoir <b>full</b>, heated, safety pop-off."],
+    ["Humidifiers","Active vs passive humidifiers?","<b>Active</b> adds heat/water: bubble, passover, nebulizers, vaporizers. <b>Passive</b> = HME."],
+    ["Humidifiers","Passover humidifier: what is it best for?","High flows — <b>ventilators</b>. Temperature probe at the patient's airway."],
+    ["Humidifiers","Where should ventilator-circuit condensate go?","Drain <b>away from the patient</b> into the trash — never back into the heater or nebulizer."],
+    ["HME","How does an HME work?","Hygroscopic layers trap exhaled heat and moisture and return it on the next breath."],
+    ["HME","HME hazards?","Under-hydration, copious secretions, <b>mucus plugging</b>, <b>↑ deadspace</b>."],
+    ["HME","Short-term or long-term use for an HME?","<b>Short-term only.</b>"],
+    ["Aerosol","Define aerosol.","Liquid or solid particles suspended in a gas (mist)."],
+    ["Aerosol","What does MMAD describe?","The particle size where 50% of particles are heavier and 50% are lighter."],
+    ["Aerosol","Where do particles deposit by size?","<b>&lt; 5 µm</b> → lungs; <b>5–10 µm</b> → proximal airways; <b>&gt; 10 µm</b> → nose & mouth."],
+    ["Aerosol","About what % of aerosol actually deposits in the lungs?","About <b>20%</b>."],
+    ["Aerosol","What happens to hygroscopic particles?","They <b>grow</b> in size (absorb water)."],
+    ["Aerosol","3 indications for aerosol therapy?","Humidify artificial airways, mobilize secretions, give respiratory medications."],
+    ["Bland Aerosol","Indications for cool bland aerosol?","Upper airway edema: croup (LTB), subglottic edema, post-extubation edema, post-op upper airway."],
+    ["Bland Aerosol","Contraindications to bland aerosol?","Bronchoconstriction; history of airway hyperresponsiveness."],
+    ["Hazards","Main nosocomial organism with aerosol equipment?","<b>Pseudomonas aeruginosa</b>."],
+    ["Hazards","How often do you change nebulizers, and with what water?","<b>Every 24 hours</b>, with <b>sterile water</b>."],
+    ["Hazards","Hazards of aerosol therapy?","Infection, overhydration, tracheal burns (heated), bronchospasm/reactive airways."],
+    ["Hazards","Bronchospasm during aerosol — what do you give?","A <b>bronchodilator</b>."],
+    ["USN","How does an ultrasonic nebulizer make aerosol?","A <b>piezoelectric transducer</b> turns electrical energy into ultrasonic waves (<b>1.35 MHz</b>) — a geyser effect."],
+    ["USN","On a USN, what controls output vs flow?","<b>Amplitude</b> controls output; a <b>fan</b> produces the flow."],
+    ["USN","USN hazards?","Bronchospasm, overhydration, expensive, <b>no O₂</b> (titrate separately), condensation."]
+  ],
+  quiz:[]
+},
+
+/* ---------------------------------------------------------------- */
+{ id:"act", name:"Airway Clearance & Incentive Spirometry", short:"Airway Clearance & IS",
+  notes:[
+    {topic:"Normal Airway Clearance", items:[
+      "Requires a <b>patent airway</b>, a functional <b>mucociliary escalator</b>, and an <b>effective cough</b>.",
+      "An effective cough moves mucus from the lower to the upper airway."]},
+    {topic:"The Cough & What Impairs It", html:
+      "<table><thead><tr><th>Phase</th><th>Impaired by</th></tr></thead><tbody>"+
+      "<tr><td>Irritation</td><td>Anesthesia, CNS depression, narcotics</td></tr>"+
+      "<tr><td>Inspiration</td><td>Pain, neuromuscular dysfunction, pulmonary or abdominal restriction</td></tr>"+
+      "<tr><td>Compression</td><td>Artificial airway, abdominal surgery, weakness, laryngeal nerve damage</td></tr>"+
+      "<tr><td>Expulsion</td><td>Airway compression, obstruction, emphysema</td></tr></tbody></table>"},
+    {topic:"When Airway Clearance Is Needed", items:[
+      "Loose, ineffective cough; labored breathing; coarse inspiratory & expiratory crackles; tachypnea/tachycardia; fever; CXR showing atelectasis and infiltrates.",
+      "<b>Assessment:</b> history, surgery, age, anesthesia, artificial airway, PFT/CXR, ABGs."]},
+    {topic:"Chest Physiotherapy: Goals & Indications", items:[
+      "<b>Goals:</b> prevent secretion buildup, improve mobilization of retained secretions, improve distribution of ventilation, decrease airway resistance.",
+      "<b>Indications:</b> acutely ill with copious secretions; acute respiratory failure with retained secretions; acute lobar atelectasis; V/Q abnormalities; preventing post-op complications; chronic patients with large amounts of sputum.",
+      "Most effective when the patient coughs up at least <b>25–30 mL/day</b>."]},
+    {topic:"Percussion", items:[
+      "Strike the chest wall with a <b>cupped hand</b>, or use mechanical/pneumatic percussors. At least <b>5–10 minutes</b>.",
+      "<b>Do NOT percuss over:</b> spine, sternum, scapulae, clavicles, surgical sites, trauma areas, <b>bare skin</b>."]},
+    {topic:"Postural Drainage", items:[
+      "Uses gravity. Most effective when producing <b>&gt; 30 mL/day</b> of sputum. Requires head-down positions of <b>&gt; 25°</b>.",
+      "Doesn't help mucociliary clearance in normal subjects or lung function in stable chronic disease.",
+      "<b>Indications:</b> difficulty clearing secretions, atelectasis, CF, bronchiectasis, foreign body in the airway.",
+      "Schedule <b>1–2 hours before or after meals/tube feeds</b>. Pain meds first if needed. Explain, auscultate, use pillows. Hold each position <b>3–15 minutes</b>.",
+      "<b>Contraindications:</b> head and neck injury, active hemorrhage, hemodynamic instability.",
+      "<b>Relative contraindications:</b> ↑ ICP (neurosurgery), recent spinal surgery, empyema, bronchopleural fistula, pulmonary edema, fractured ribs, aged/confused/anxious patients."]},
+    {topic:"Monitoring & Outcomes", items:[
+      "<b>Monitor:</b> sputum (4 qualities), cough effectiveness, pulse rate/rhythm, BP, breath sounds, RR and pattern, SaO₂/color, subjective response. <b>Always face the patient.</b>",
+      "<b>Signs it worked:</b> ↑ sputum, improved breath sounds, normal vital signs, clearer CXR, better ABGs, positive subjective response.",
+      "<b>Choosing a strategy:</b> patient motivation/goals, physician goals, effectiveness, age/mobility, therapist skill, equipment/assistants, cost."]},
+    {topic:"Complications & What to Do", items:[
+      "<b>Complications:</b> hypoxemia, rib fractures, bronchospasm, ↑ ICP, hemorrhage, ↓ cardiac output, vomiting/aspiration.",
+      "<b>Hypoxemia:</b> give 100% O₂, stop therapy, return the patient to the resting position, consult the physician. (Give higher FiO₂ during the procedure if hypoxemia is likely.)",
+      "<b>Hypotension or dysrhythmia:</b> stop, return to the resting position, give or increase O₂, contact the physician.",
+      "<b>Pulmonary hemorrhage:</b> stop, return to the resting position, call the physician immediately, give O₂, maintain the airway.",
+      "<b>Vomiting/aspiration:</b> stop, clear the airway and suction, give O₂, return to the resting position, contact the physician immediately.",
+      "<b>Bronchospasm:</b> stop, return to the resting position, give/increase O₂, give ordered bronchodilators.",
+      "<b>Modifications:</b> aspiration risk and can't go head-down → lateral decubitus, or flutter valve, PEP, or IPV. Aged/confused patient who can't cooperate → mechanical insufflation-exsufflation + suctioning."]},
+    {topic:"Incentive Spirometry", items:[
+      "<b>Indications:</b> atelectasis; improve cough; strengthen lung muscles; mobilize secretions; abdominal or chest surgery/trauma; neuromuscular disease, para/quadriplegia.",
+      "<b>Guidelines:</b> cooperative, motivated patient, sitting <b>upright</b>, with effective teaching.",
+      "<b>Initial goal = 2× the patient's tidal volume.</b> Inspiratory time 5–15 s with a 2–3 s pause (review sheet: hold 3–5 s). Teach <b>before surgery</b>.",
+      "<b>Hazards:</b> hyperventilation → respiratory alkalosis (pH &gt; 7.45); discomfort from poor pain control; worsening bronchospasm.",
+      "<b>Contraindications:</b> unconscious or unable to cooperate; unable to generate an adequate inspiration.",
+      "<b>Monitor:</b> pre-op teaching, observe use, give feedback; frequency, breaths per session, inspiratory volume, effort, compliance, vital signs; device within reach."]},
+    {topic:"Retained Secretions & Atelectasis Risk", items:[
+      "<b>Chain:</b> inflammation and partial plugging → uneven V/Q → absorption atelectasis → ↓ compliance → pneumonia → fever.",
+      "<b>Signs:</b> ↑ WOB, accessory muscles, tachypnea, ↓ pulse ox, ↑ FiO₂ need. At 100% FiO₂: shunting and <b>refractory hypoxemia</b>.",
+      "<b>Case:</b> 47-year-old obese man, upper abdominal surgery, 60 pack-year history → risk factors: <b>obesity, smoking history, upper abdominal surgery</b>."]},
+    {topic:"Lung Volumes (from the IS slide)", html:
+      "<table><thead><tr><th>Volume / Capacity</th><th>Normal (mL)</th></tr></thead><tbody>"+
+      "<tr><td>IRV</td><td>3,100</td></tr><tr><td>V<sub>T</sub></td><td>500</td></tr><tr><td>ERV</td><td>1,200</td></tr><tr><td>RV</td><td>1,200</td></tr>"+
+      "<tr><td><b>IC</b> = V<sub>T</sub> + IRV</td><td>3,600</td></tr><tr><td><b>FRC</b> = ERV + RV</td><td>2,400</td></tr>"+
+      "<tr><td><b>VC</b> = IRV + V<sub>T</sub> + ERV</td><td>4,800</td></tr><tr><td><b>TLC</b> = VC + RV</td><td>6,000</td></tr></tbody></table>"}
+  ],
+  cards:[
+    ["Airway Clearance","3 requirements for normal airway clearance?","Patent airway, functional <b>mucociliary escalator</b>, effective <b>cough</b>."],
+    ["Airway Clearance","Physical findings that suggest the need for airway clearance?","Loose ineffective cough, labored breathing, coarse crackles, tachypnea/tachycardia, fever, CXR atelectasis/infiltrates."],
+    ["Cough","4 phases of the cough?","Irritation, inspiration, compression, expulsion."],
+    ["Cough","Which cough phase does an artificial airway impair?","<b>Compression</b> (can't close the glottis)."],
+    ["Cough","What impairs the irritation phase?","Anesthesia, CNS depression, narcotics."],
+    ["CPT","4 goals of chest physiotherapy?","Prevent secretion buildup, mobilize retained secretions, improve distribution of ventilation, decrease airway resistance."],
+    ["CPT","Sputum volume where CPT is most effective?","At least <b>25–30 mL/day</b> (PD: &gt; 30 mL/day)."],
+    ["Percussion","How is percussion done, and for how long?","Cupped hand or mechanical/pneumatic percussor, at least <b>5–10 min</b>."],
+    ["Percussion","Where do you NOT percuss?","Spine, sternum, scapulae, clavicles, surgical sites, trauma areas, bare skin."],
+    ["CPT","Complications of CPT?","Hypoxemia, rib fractures, bronchospasm, ↑ ICP, hemorrhage, ↓ cardiac output, vomiting/aspiration."],
+    ["Postural Drainage","Head-down angle needed for postural drainage?","<b>&gt; 25°</b>."],
+    ["Postural Drainage","When should PD be scheduled relative to meals?","<b>1–2 hours before or after</b> meals or tube feedings."],
+    ["Postural Drainage","How long should each PD position be held?","<b>3–15 minutes</b>."],
+    ["Postural Drainage","Indications for postural drainage?","Difficulty clearing secretions, atelectasis, CF, bronchiectasis, foreign body."],
+    ["Postural Drainage","Contraindications (absolute) to PD?","Head and neck injury, active hemorrhage, hemodynamic instability."],
+    ["Postural Drainage","Relative contraindications to PD?","↑ ICP, recent spinal surgery, empyema, bronchopleural fistula, pulmonary edema, fractured ribs, aged/confused/anxious."],
+    ["Monitoring","What do you monitor during CPT?","Sputum, cough, pulse, BP, breath sounds, RR/pattern, SaO₂/color, subjective response — and <b>face the patient</b>."],
+    ["Monitoring","Outcome criteria for successful PD?","↑ sputum, better breath sounds, normal vitals, clearer CXR, better ABGs, positive subjective response."],
+    ["Complications","Patient becomes hypoxemic during CPT — actions?","Give <b>100% O₂</b>, stop therapy, return to resting position, consult physician."],
+    ["Complications","Patient vomits during PD — actions?","Stop, clear airway/suction, give O₂, return to resting position, contact physician immediately."],
+    ["Complications","Bronchospasm during CPT — actions?","Stop, return to resting position, give/increase O₂, give ordered bronchodilators, contact physician."],
+    ["Modification","Patient needs RML drainage but is an aspiration risk — options?","<b>Lateral decubitus</b> position, or flutter valve, PEP, or IPV (no position change)."],
+    ["Modification","Aged, confused patient who can't cooperate — option?","<b>Mechanical insufflation-exsufflation</b> + suctioning."],
+    ["Incentive Spirometry","IS indications (from the slides)?","Atelectasis, improve cough, strengthen muscles, mobilize secretions, abdominal/chest surgery or trauma, neuromuscular disease/para/quadriplegia."],
+    ["Incentive Spirometry","Guidelines for effective IS?","Cooperative, motivated, <b>upright</b> patient with effective teaching."],
+    ["Incentive Spirometry","Initial IS goal?","<b>2× the patient's tidal volume.</b>"],
+    ["Incentive Spirometry","IS timing per the slides?","Inspiratory time <b>5–15 s</b>, <b>2–3 s</b> pause. (Review sheet: hold 3–5 s.)"],
+    ["Incentive Spirometry","IS hazards?","Hyperventilation → <b>respiratory alkalosis</b> (pH &gt; 7.45), discomfort from poor pain control, worse bronchospasm."],
+    ["Incentive Spirometry","IS contraindications?","Unconscious/can't cooperate; can't generate an adequate inspiration."],
+    ["Retained Secretions","Chain of events from retained secretions?","Plugging → uneven V/Q → absorption atelectasis → ↓ compliance → pneumonia → fever."],
+    ["Retained Secretions","What happens if you put a shunting patient on 100% FiO₂?","<b>Refractory hypoxemia</b> — PaO₂ barely improves."],
+    ["Lung Volumes","IC, FRC, VC, TLC — what are they made of?","IC = V<sub>T</sub> + IRV · FRC = ERV + RV · VC = IRV + V<sub>T</sub> + ERV · TLC = VC + RV"],
+    ["Lung Volumes","Normal IRV, V<sub>T</sub>, ERV, RV?","IRV 3,100 · V<sub>T</sub> 500 · ERV 1,200 · RV 1,200 mL"]
+  ],
+  quiz:[]
+}
+];
+
+
+/* ---------------- HELPERS ---------------- */
+const $ = s => document.querySelector(s);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const store = {
+  get(k, d){ try { const v = localStorage.getItem('q4r2-' + k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem('q4r2-' + k, JSON.stringify(v)); } catch(e){} }
+};
+const unitById = id => UNITS.find(u => u.id === id);
+
+/* ---------------- ROUTING ---------------- */
+const VIEWS = ['notes','cards','quiz'];
+function route(){
+  const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'notes';
+  VIEWS.forEach(n => $('#view-' + n).classList.toggle('on', n === v));
+  document.querySelectorAll('nav.main a').forEach(a => a.classList.toggle('on', a.dataset.view === v));
+}
+window.addEventListener('hashchange', route);
+
+/* ---------------- NOTES ---------------- */
+let noteUnit = store.get('noteUnit', 'review');
+if (!unitById(noteUnit) || !unitById(noteUnit).notes.length) noteUnit = 'review';
+function renderNotes(){
+  $('#noteChips').innerHTML = UNITS.filter(u => u.notes.length).map(u => `<button class="chip ${u.id === noteUnit ? 'on' : ''}" data-u="${u.id}">${u.short}</button>`).join('');
+  document.querySelectorAll('#noteChips .chip').forEach(c => c.onclick = () => { noteUnit = c.dataset.u; store.set('noteUnit', noteUnit); renderNotes(); });
+  const u = unitById(noteUnit);
+  $('#noteBody').innerHTML = `<div class="unit-title">${u.name}</div>` + u.notes.map(n => {
+    if (n.flag) return `<div class="card flag">${n.flag}</div>`;
+    if (n.html) return `<div class="card"><h2>${n.topic}</h2>${n.html}</div>`;
+    return `<div class="card"><h2>${n.topic}</h2><ul>${n.items.map(i => `<li>${i}</li>`).join('')}</ul></div>`;
+  }).join('');
+}
+
+/* ---------------- FLASHCARDS ---------------- */
+const ALLCARDS = [];
+UNITS.forEach(u => u.cards.forEach((c, i) => ALLCARDS.push({ id: u.id + ':' + i, unit: u.id, topic: c[0], front: c[1], back: c[2] })));
+let known = new Set(store.get('known', []));
+let deck = [], idx = 0;
+
+$('#cardUnit').innerHTML = `<option value="all">All units (${ALLCARDS.length} cards)</option>` +
+  UNITS.filter(u => u.cards.length).map(u => `<option value="${u.id}">${u.name} (${u.cards.length})</option>`).join('');
+function fillTopics(){
+  const u = $('#cardUnit').value;
+  const pool = ALLCARDS.filter(c => u === 'all' || c.unit === u);
+  const topics = [...new Set(pool.map(c => c.topic))];
+  $('#cardTopic').innerHTML = `<option value="all">All topics</option>` + topics.map(t => `<option>${t}</option>`).join('');
+  $('#cardTopic').style.display = u === 'all' ? 'none' : '';
+}
+function buildDeck(doShuffle){
+  const u = $('#cardUnit').value, t = $('#cardTopic').value, only = $('#onlyLearning').checked;
+  let list = ALLCARDS.filter(c => (u === 'all' || c.unit === u) && (u === 'all' || t === 'all' || c.topic === t) && (!only || !known.has(c.id)));
+  deck = doShuffle ? shuffle(list) : list; idx = 0; showCard();
+}
+let swapTimer = null;
+function setFaces(topic, front, back){
+  clearTimeout(swapTimer);
+  const wasFlipped = $('#flip').classList.contains('flipped');
+  $('#flip').classList.remove('flipped');
+  $('#fTopic').textContent = $('#bTopic').textContent = topic;
+  $('#fQ').innerHTML = front;
+  if (wasFlipped) swapTimer = setTimeout(() => { $('#fA').innerHTML = back; }, 260);
+  else $('#fA').innerHTML = back;
+}
+function showCard(){
+  const has = idx < deck.length;
+  ['learnCard','knowCard'].forEach(id => $('#' + id).disabled = !has);
+  $('#prevCard').disabled = idx === 0;
+  if (!deck.length){
+    setFaces('', 'Nothing left in this pile — nice work! 🎉', 'Pick another unit or topic, or untick “Still learning only.”');
+    $('#cardCount').textContent = ''; $('#cardBar').style.width = '100%';
+  } else if (!has){
+    setFaces('', 'End of the deck! 🎉', 'Shuffle to go again, or tick “Still learning only” to drill the tough ones.');
+    $('#cardCount').textContent = 'Done'; $('#cardBar').style.width = '100%';
+  } else {
+    const c = deck[idx], u = unitById(c.unit);
+    setFaces((u.short + ' · ' + c.topic), c.front, c.back);
+    $('#cardCount').textContent = `Card ${idx + 1} of ${deck.length}`;
+    $('#cardBar').style.width = ((idx + 1) / deck.length * 100) + '%';
+  }
+  $('#cardStatus').textContent = `You've marked ${known.size} of ${ALLCARDS.length} cards as “Got it.”`;
+}
+function mark(isKnown){
+  if (idx >= deck.length) return;
+  const id = deck[idx].id;
+  isKnown ? known.add(id) : known.delete(id);
+  store.set('known', [...known]);
+  idx++; showCard();
+}
+$('#flip').addEventListener('click', () => $('#flip').classList.toggle('flipped'));
+$('#flip').addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); $('#flip').classList.toggle('flipped'); } });
+$('#prevCard').onclick = () => { if (idx > 0){ idx--; showCard(); } };
+$('#knowCard').onclick = () => mark(true);
+$('#learnCard').onclick = () => mark(false);
+$('#shuffleCards').onclick = () => buildDeck(true);
+$('#cardUnit').onchange = () => { fillTopics(); buildDeck(false); };
+$('#cardTopic').onchange = () => buildDeck(false);
+$('#onlyLearning').onchange = () => buildDeck(false);
+document.addEventListener('keydown', e => {
+  if (!$('#view-cards').classList.contains('on') || ['SELECT','INPUT'].includes(e.target.tagName)) return;
+  if (e.key === 'ArrowRight') mark(true);
+  if (e.key === 'ArrowLeft') $('#prevCard').click();
+});
+
+/* ---------------- QUIZ ---------------- */
+const ALLQ = [];
+UNITS.forEach(u => u.quiz.forEach((q, i) => ALLQ.push({ id: u.id + ':' + i, unit: u.id, q: q[0], right: q[1], wrong: q[2], why: q[3] })));
+const QUNITS = UNITS.filter(u => u.quiz.length);
+const qUnits = new Set(QUNITS.map(u => u.id)); // all question sets are combined into one pool
+let qLen = store.get('qLen', '20');
+let qs = [], qi = 0, score = 0, missed = [];
+
+function quizSetup(){
+  const pool = ALLQ.filter(q => qUnits.has(q.unit)).length;
+  const lens = ['10','20','40','all'];
+  $('#quizBox').innerHTML = `<div class="card"><h2>Practice Quiz</h2>
+    <p class="muted" style="margin-top:-4px">${pool} questions covering the review sheet, class practice questions, and Jeopardy review. Questions and answers are shuffled every time, and you'll see an explanation after each one.</p>
+    <h3>Number of questions</h3>
+    <div class="chips" style="flex-wrap:wrap">${lens.map(l => `<button class="chip ${qLen === l ? 'on' : ''}" data-l="${l}">${l === 'all' ? 'All (' + pool + ')' : l}</button>`).join('')}</div>
+    <div class="row" style="margin-top:10px"><button class="btn primary" id="go" ${pool ? '' : 'disabled'}>Start quiz</button>
+    <span class="muted">${pool ? Math.min(pool, qLen === 'all' ? pool : +qLen) + ' questions' : 'Pick at least one unit'}</span></div></div>`;
+  document.querySelectorAll('#quizBox [data-l]').forEach(c => c.onclick = () => { qLen = c.dataset.l; store.set('qLen', qLen); quizSetup(); });
+  $('#go').onclick = () => {
+    let pool = shuffle(ALLQ.filter(q => qUnits.has(q.unit)));
+    if (qLen !== 'all') pool = pool.slice(0, +qLen);
+    startQuiz(pool);
+  };
+}
+function startQuiz(list){
+  qs = shuffle(list).map(q => ({ q, opts: shuffle([q.right, ...q.wrong]) }));
+  qi = 0; score = 0; missed = []; renderQ();
+}
+function renderQ(){
+  const { q, opts } = qs[qi];
+  $('#quizBox').innerHTML = `<div class="card">
+    <div class="row"><span class="muted">Question ${qi + 1} of ${qs.length}</span><span class="spacer"></span><span class="muted">Score: ${score}</span></div>
+    <div class="progress"><div style="width:${qi / qs.length * 100}%"></div></div>
+    <div class="qtext">${q.q}</div>
+    <div id="opts">${opts.map((o, k) => `<button class="opt" data-k="${k}">${o}</button>`).join('')}</div>
+    <div id="after"></div>
+    <div class="row" style="margin-top:6px"><button class="btn" id="quit" style="padding:6px 12px;font-size:14px">End quiz</button></div></div>`;
+  document.querySelectorAll('.opt').forEach(b => b.onclick = () => answer(b, opts));
+  $('#quit').onclick = () => { if (qi > 0 || document.querySelector('.opt:disabled')) { qs = qs.slice(0, document.querySelector('.opt:disabled') ? qi + 1 : qi); results(); } else quizSetup(); };
+}
+function answer(btn, opts){
+  const { q } = qs[qi], picked = opts[+btn.dataset.k], right = picked === q.right;
+  document.querySelectorAll('.opt').forEach(b => { b.disabled = true; if (opts[+b.dataset.k] === q.right) b.classList.add('correct'); });
+  if (right) score++; else { btn.classList.add('wrong'); missed.push(q); }
+  qs[qi].ok = right;
+  const last = qi === qs.length - 1;
+  $('#after').innerHTML = `<div class="explain"><b class="v">${right ? 'Correct!' : 'Not quite.'}</b>${q.why}</div>
+    <div class="row" style="margin-top:14px"><span class="spacer"></span><button class="btn primary" id="next">${last ? 'See results' : 'Next →'}</button></div>`;
+  $('#next').onclick = () => { if (last) results(); else { qi++; renderQ(); } };
+  $('#next').focus();
+}
+function results(){
+  if (!qs.length) return quizSetup();
+  const pct = Math.round(score / qs.length * 100);
+  const msg = pct >= 90 ? "You're ready. 💪" : pct >= 75 ? 'Solid — review the ones you missed.' : 'Keep going — review the ones you missed and the flashcards, then retake.';
+  $('#quizBox').innerHTML = `<div class="card"><h2>Results</h2>
+    <div class="score">${pct}%</div><p>${score} of ${qs.length} correct. ${msg}</p>
+    ${missed.length ? `<h3>Review what you missed</h3><ul class="missed">${missed.map(q => `<li>${q.q}<br><b style="color:var(--good)">${q.right}</b> <span class="muted">— ${q.why}</span></li>`).join('')}</ul>` : ''}
+    <div class="row" style="margin-top:16px">
+      ${missed.length ? `<button class="btn primary" id="retryMissed">Retry missed (${missed.length})</button>` : ''}
+      <button class="btn" id="again">New quiz</button></div></div>`;
+  if (missed.length) $('#retryMissed').onclick = () => startQuiz(missed.slice());
+  $('#again').onclick = quizSetup;
+}
+
+/* ---------------- INIT ---------------- */
+renderNotes();
+fillTopics(); buildDeck(false);
+quizSetup();
+route();
+</script>
+</body>
+</html>
